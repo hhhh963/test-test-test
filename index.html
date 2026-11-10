@@ -53,6 +53,7 @@ input[type=file]{padding:6px}input[type=file]::file-selector-button{font:inherit
 @media print{header,.noprint{display:none!important}.pr{display:block}body{background:#fff;color:#000}.pb{page-break-before:always}main{padding:0}}
 </style></head><body><div id="app"></div>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
 <script>
 /* ===== Конфигурация ЕГЭ 2027 (проект ФИПИ) — правьте здесь ===== */
@@ -61,7 +62,7 @@ const CFG={time:235,max:33,part1Last:13,scale:null, // scale: {первичны�
  pts:[1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,2,2,3,4,4]};
 const T=CFG.topics,M=CFG.pts,N=T.length,part=n=>n<=CFG.part1Last?1:2;
 const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fmt=s=>esc(s).replace(/\n/g,'<br>'),uid=()=>Math.random().toString(36).slice(2,9);
+const fmt=s=>esc(s).replace(/\n/g,'<br>'),uid=()=>crypto.randomUUID();
 const norm=s=>String(s||'').trim().replace(/\s+/g,'').replace(/,/g,'.');
 const typeset=()=>{try{window.MathJax&&MathJax.typesetPromise&&MathJax.typesetPromise()}catch(e){}};
 addEventListener('load',typeset);
@@ -77,9 +78,9 @@ const fT=r=>{const h=Math.floor(r/3600),m=Math.floor(r%3600/60),s=r%60;return h+
 const nOpts=(sel,all)=>(all?'<option value="0">Все номера</option>':'')+T.map((x,i)=>`<option value="${i+1}" ${sel==i+1?'selected':''}>${i+1} · ${esc(x)}</option>`).join('');
 
 function go(v,c){if(!TUT&&!['home','solve','result'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
-function render(){clearInterval(tm);
+function render(){clearInterval(tm);if(V=='login'){$('#app').innerHTML='<main>'+VIEWS.login()+'</main>';return}
  const tabs=TUT?[['home','Главная'],['bank','Банк'],['build','Конструктор']].concat(SH?[['res','Ученики']]:[]):[['home','Главная']];
- $('#app').innerHTML=`<header class="noprint"><b>ЕГЭ 2027 · профильная математика</b><span class="mut" id="st">${stat()}</span><nav>${tabs.map(([k,l])=>`<button class="tab ${V==k?'on':''}" data-a="go" data-v="${k}">${l}</button>`).join('')}<button class="tab" data-a="theme">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</button></nav></header><main>${VIEWS[V]()}</main>`;
+ $('#app').innerHTML=`<header class="noprint"><b>ЕГЭ 2027 · профильная математика</b><span class="mut" id="st">${stat()}</span><nav>${tabs.map(([k,l])=>`<button class="tab ${V==k?'on':''}" data-a="go" data-v="${k}">${l}</button>`).join('')}${SH?'<button class="tab" data-a="out">Выйти</button>':''}<button class="tab" data-a="theme">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</button></nav></header><main>${VIEWS[V]()}</main>`;
  if(V=='solve'){tick();tm=setInterval(tick,1000)}
  if(V=='bank')fillList();hydrate();
  typeset()}
@@ -91,7 +92,7 @@ home(){const a=S.att.filter(x=>!x.done).slice(-1)[0],vs=S.vars.slice().reverse()
  return `<h1>Добрый день</h1><p class="mut">${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p>
  ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:`<button class="btn big" data-a="go" data-v="${S.bank.length?'build':'bank'}">${S.bank.length?'Составить первый вариант':'Добавить первое задание'}</button>`}
  <h2>Варианты</h2>${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
- <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')||'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Репетитор ещё не опубликовал варианты.')+'</p>'}`},
+ <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')||'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Репетитор ещё не опубликовал варианты.')+'</p>'}`},
 
 bank(){const f=C.f||{n:1,topic:T[0],diff:'П'},e=C.e||{};
  return `<h1>Банк заданий</h1><p class="mut">В банке: ${S.bank.length}. ${C.msg?`<span class="bad">${esc(C.msg)}</span>`:''}</p>
@@ -133,6 +134,9 @@ result(){const a=att(),v=S.vars.find(x=>x.id==a.vid),ts=vt(v),s=score(a),mx=ts.r
  `<tr><td>${t.n}</td><td>${fmt(a.answers[t.id])||'—'}${t.solution?`<details><summary class="mut">Эталон и критерии</summary>${fmt(t.solution)}</details>`:''}</td><td><input type="number" min="0" max="${M[t.n-1]}" data-f="self" data-t="${t.id}" data-m="${M[t.n-1]}" value="${a.self[t.id]||0}" style="width:70px"> из ${M[t.n-1]}</td></tr>`).join('')}</table></div>
  <button class="btn" data-a="go" data-v="home">На главную</button>`},
 
+login(){if(C.load)return'<p class="mut">Загрузка…</p>';return `<h1>ЕГЭ 2027 · профильная математика</h1><p class="mut">Войдите, чтобы продолжить. ${C.msg?`<span class="bad">${esc(C.msg)}</span>`:''}</p><div class="card"><label>Почта<input id="lm" type="email" autocomplete="username"></label><label>Пароль<input id="lp" type="password" autocomplete="current-password"></label><label>Имя (только при регистрации)<input id="ln"></label><div class="row" style="margin-top:14px"><button class="btn" data-a="login">Войти</button><button data-a="reg">Зарегистрироваться</button></div></div>`},
+asg(){const v=S.vars.find(x=>x.id==C.vid);if(!v)return'';const st=S.stu.filter(p=>p.role=='student');
+ return `<h1>Назначить: ${esc(v.name)}</h1><p class="mut">Отметьте учеников, которые увидят этот вариант. Ученик появляется в списке после регистрации.</p><div class="card">${st.map(p=>`<label class="chk"><input type="checkbox" data-a="tg" data-v="${p.id}" ${S.asg.some(x=>x.vid==v.id&&x.sid==p.id)?'checked':''}><span>${esc(p.name||'Без имени')}</span></label>`).join('')||'<span class="mut">Пока никто не зарегистрировался.</span>'}</div><button class="btn" data-a="go" data-v="home">Готово</button>`},
 res(){const l=S.att.filter(a=>a.done).sort((x,y)=>(y.end||0)-(x.end||0));
  return `<h1>Результаты учеников</h1><p class="mut">Откройте работу, чтобы проверить часть 2 и поставить баллы.</p><div class="card">${l.map(a=>{const v=S.vars.find(x=>x.id==a.vid);return `<div class="it"><div><b>${esc(PN[a.uid]||'Ученик')}</b><div class="mut">${esc(v?v.name:'вариант удалён')} · ${a.end?new Date(a.end).toLocaleDateString('ru-RU'):''}</div></div><div class="row" style="flex:0 0 auto;margin:0;align-items:center"><span>${v?score(a).total+' б.':''}</span>${v?`<button data-a="open" data-v="${a.id}">Открыть</button>`:''}</div></div>`}).join('')||'<span class="mut">Пока нет завершённых работ.</span>'}</div>`},
 stats(){const rows=T.map((x,i)=>{const n=i+1,ts=S.bank.filter(t=>t.n==n);let g=0,tot=0;
@@ -156,27 +160,37 @@ const iget=async k=>{const d=await idb();return new Promise(res=>{const q=d.tran
 const idel=async k=>{try{const d=await idb();d.transaction('i','readwrite').objectStore('i').delete(k)}catch(e){}};
 const urls={},timg=t=>t.img?`<img class="timg" data-img="${t.img}" alt="Рисунок к заданию">`:'';
 const imgHtml=k=>`<img class="timg" data-img="${k}" alt="" style="max-height:260px;width:auto"><button data-a="rmimg">Убрать картинку</button>`;
-async function hydrate(){for(const im of document.querySelectorAll('img[data-img]')){const k=im.dataset.img;if(k.indexOf('a:')==0){im.src='/_blob/'+k.slice(2);continue}try{if(!urls[k]){const b=await iget(k);if(b)urls[k]=URL.createObjectURL(b)}if(urls[k])im.src=urls[k]}catch(e){}}}
+async function hydrate(){for(const im of document.querySelectorAll('img[data-img]')){const k=im.dataset.img;if(k.indexOf('a:')==0){try{if(!urls[k]){const r=await sb.storage.from('task-images').createSignedUrl(k.slice(2),43200);if(r.data)urls[k]=r.data.signedUrl}if(urls[k])im.src=urls[k]}catch(e){}continue}try{if(!urls[k]){const b=await iget(k);if(b)urls[k]=URL.createObjectURL(b)}if(urls[k])im.src=urls[k]}catch(e){}}}
 const shrink=f=>new Promise((res,rej)=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.85)};im.onerror=rej;im.src=u});
-async function pick(f){if(!f||!$('#imgbox'))return;try{const b=await shrink(f);let k;if(AS){const r=await AS.upload(b);k='a:'+r.id}else{k=uid();await iput(k,b)}if(C.img&&C.img!=C.orig)idel(C.img);C.img=k;$('#imgbox').innerHTML=imgHtml(k);hydrate()}catch(e){$('#imgbox').innerHTML='<p class="bad">Не удалось сохранить картинку. Попробуйте другой файл (JPG или PNG).</p>'}}
+async function pick(f){if(!f||!$('#imgbox'))return;try{const b=await shrink(f),pp=uid()+'.jpg',rr=await sb.storage.from('task-images').upload(pp,b,{contentType:'image/jpeg'});if(rr.error)throw rr.error;const k='a:'+pp;if(C.img&&C.img!=C.orig)idel(C.img);C.img=k;$('#imgbox').innerHTML=imgHtml(k);hydrate()}catch(e){$('#imgbox').innerHTML='<p class="bad">Не удалось сохранить картинку. Попробуйте другой файл (JPG или PNG).</p>'}}
 document.addEventListener('paste',e=>{if(V!='bank')return;const it=[...((e.clipboardData||{}).items||[])].find(i=>i.type.indexOf('image/')==0);if(it){e.preventDefault();pick(it.getAsFile())}});
-/* ===== Общий режим: db + assets + user. Без входа работает локально ===== */
-let SH=false,TUT=true,NW=false,MIG=0,DB=null,AS=null,UU=null,ME=null,LEG=null,SY={bank:{},vars:{},att:{}},PN={},tmr=null,got=0;
-const stat=()=>!SH?'Локальный режим: данные только на этом устройстве':NW?'Результаты не сохраняются: у вас доступ только для просмотра':TUT?'Репетитор · общий банк':'Ученик';
-const mark=()=>{const e=$('#st');if(e)e.textContent=stat()},wr=p=>p.catch(()=>{NW=true;mark()}),cl=o=>JSON.parse(JSON.stringify(o));
-const ref=()=>{if(V=='home'||V=='res')render();else if(V=='bank')fillList()};
-function sync(){if(!SH)return;
- if(TUT)for(const c of ['bank','vars']){const cur={};S[c].forEach(x=>{cur[x.id]=1;const j=JSON.stringify(x);if(SY[c][x.id]!==j){SY[c][x.id]=j;wr(DB.collection(c).doc(x.id).set(x))}});for(const id in SY[c])if(!cur[id]){delete SY[c][id];wr(DB.collection(c).doc(id).delete())}}
- clearTimeout(tmr);tmr=setTimeout(()=>{const g={};S.att.forEach(a=>{const u=a.uid||ME;(g[u]=g[u]||[]).push(a)});for(const u in g){const j=JSON.stringify(g[u]);if(SY.att[u]!==j){SY.att[u]=j;wr(DB.doc('att/'+u).set({uid:u,runs:g[u]}))}}},500)}
-function namesFor(){if(!UU||!TUT)return;const ids=[...new Set(S.att.map(a=>a.uid).filter(Boolean))];if(ids.length)UU.profiles(ids).then(p=>{ids.forEach(i=>{if(p[i])PN[i]=p[i].name});if(V=='res')render()}).catch(()=>{})}
-async function init(){try{if(!window.claude||!claude.use)return;DB=await claude.use('db');UU=await claude.use('user');AS=await claude.use('assets');
- if(UU){ME=await UU.id();TUT=await UU.canEdit()}
- if(!DB||!ME)return;SH=true;LEG=load();S={bank:[],vars:[],att:[]};const er=()=>{};
- for(const c of ['bank','vars'])DB.collection(c).onSnapshot(s=>{S[c]=s.docs.map(d=>cl(d.data()));SY[c]={};S[c].forEach(x=>SY[c][x.id]=JSON.stringify(x));ref()},er);
- if(TUT)DB.collection('att').onSnapshot(s=>{if(C.aid)return;S.att=[];s.docs.forEach(d=>{const r=cl(d.data()).runs||[];S.att.push(...r);SY.att[d.id]=JSON.stringify(r)});namesFor();ref()},er);
- else DB.doc('att/'+ME).onSnapshot(s=>{if(got++)return;const d=s.data();S.att=d?(cl(d).runs||[]):[];SY.att[ME]=JSON.stringify(S.att);ref()},er);
- render()}catch(e){}}
-init();
+/* ===== Supabase: вход, база, хранилище картинок ===== */
+const SB_URL='https://fmjwwghwlntjuotkdorw.supabase.co',SB_KEY='sb_publishable_2Q92t-Fl6nTD3BsQHxEExA_YgPTrmm9';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+let SH=false,TUT=true,NW=false,MIG=0,LEG=null,ME=null,PN={},tmr=null,SY={bank:{},vars:{},asg:{},sc:{},att:{}};
+S={bank:[],vars:[],att:[],asg:[],stu:[]};V='login';C={load:1};
+const stat=()=>!SH?'':NW?'Ошибка сохранения: проверьте соединение и права доступа':TUT?'Репетитор':'Ученик';
+const mark=()=>{const e=$('#st');if(e)e.textContent=stat()},E=r=>{if(r.error)throw r.error;return r.data};
+function sync(){if(!SH)return;clearTimeout(tmr);tmr=setTimeout(()=>doSync().catch(e=>{console.error(e);NW=true;mark()}),400)}
+async function doSync(){
+ if(TUT){
+  for(const x of S.bank){const j=JSON.stringify(x);if(SY.bank[x.id]!==j){SY.bank[x.id]=j;E(await sb.from('tasks').upsert({id:x.id,n:x.n,topic:x.topic,text:x.text,img:x.img||null,code:x.code||null}));E(await sb.from('task_answers').upsert({task_id:x.id,answer:x.answer,solution:x.solution}))}}
+  for(const id in SY.bank)if(!S.bank.some(x=>x.id==id)){delete SY.bank[id];E(await sb.from('tasks').delete().eq('id',id))}
+  for(const v of S.vars){const j=JSON.stringify(v);if(SY.vars[v.id]!==j){SY.vars[v.id]=j;E(await sb.from('variants').upsert({id:v.id,name:v.name,limit_min:v.limit}));E(await sb.from('variant_tasks').delete().eq('variant_id',v.id));if(v.ids.length)E(await sb.from('variant_tasks').insert(v.ids.map((t,i)=>({variant_id:v.id,task_id:t,pos:i}))))}}
+  for(const id in SY.vars)if(!S.vars.some(x=>x.id==id)){delete SY.vars[id];E(await sb.from('variants').delete().eq('id',id))}
+  for(const x of S.asg){const k=x.vid+'|'+x.sid;if(!SY.asg[k]){SY.asg[k]=1;E(await sb.from('assignments').upsert({variant_id:x.vid,student_id:x.sid}))}}
+  for(const k in SY.asg)if(!S.asg.some(x=>x.vid+'|'+x.sid==k)){delete SY.asg[k];const[p,q]=k.split('|');E(await sb.from('assignments').delete().eq('variant_id',p).eq('student_id',q))}
+  for(const a of S.att)if(a.uid!=ME){const j=JSON.stringify(a.self);if(SY.sc[a.id]!==j){SY.sc[a.id]=j;const rows=Object.entries(a.self).map(([t,s])=>({attempt_id:a.id,task_id:t,score:s}));if(rows.length)E(await sb.from('scores').upsert(rows))}}
+ }else for(const a of S.att)if(!a.done){const j=JSON.stringify(a.answers);if(SY.att[a.id]!==j){SY.att[a.id]=j;E(await sb.from('attempts').upsert({id:a.id,variant_id:a.vid,student_id:ME,answers:a.answers,started_at:new Date(a.start).toISOString()}))}}}
+async function pull(){
+ const t=E(await sb.from('tasks').select(TUT?'*,task_answers(answer,solution)':'*'));
+ S.bank=t.map(r=>{const a=[].concat(r.task_answers||[])[0]||{};return{id:r.id,n:r.n,topic:r.topic||'',text:r.text,img:r.img||'',code:r.code||'',answer:a.answer||'',solution:a.solution||''}}).sort((x,y)=>x.n-y.n);
+ S.vars=E(await sb.from('variants').select('*,variant_tasks(task_id,pos)')).map(r=>({id:r.id,name:r.name,mode:'exam',limit:r.limit_min,seed:1,ids:(r.variant_tasks||[]).sort((a,b)=>a.pos-b.pos).map(x=>x.task_id)}));
+ S.att=E(await sb.from('attempts').select('*,scores(task_id,score)')).map(r=>{const s={};(r.scores||[]).forEach(x=>s[x.task_id]=x.score);return{id:r.id,vid:r.variant_id,uid:r.student_id,start:Date.parse(r.started_at),end:r.finished_at?Date.parse(r.finished_at):0,done:r.done,answers:r.answers||{},self:s,chk:{},i:0}});
+ if(TUT){S.asg=E(await sb.from('assignments').select('*')).map(r=>({vid:r.variant_id,sid:r.student_id}));S.stu=E(await sb.from('profiles').select('id,name,role'));S.stu.forEach(p=>PN[p.id]=p.name)}
+ SY={bank:{},vars:{},asg:{},sc:{},att:{}};S.bank.forEach(x=>SY.bank[x.id]=JSON.stringify(x));S.vars.forEach(x=>SY.vars[x.id]=JSON.stringify(x));S.asg.forEach(x=>SY.asg[x.vid+'|'+x.sid]=1);S.att.forEach(a=>{SY.sc[a.id]=JSON.stringify(a.self);SY.att[a.id]=JSON.stringify(a.answers)})}
+async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');SH=true;await pull();go('home')}
+(async()=>{try{if(E(await sb.auth.getSession()).session)await boot();else go('login')}catch(e){go('login')}})();
 /* ===== Рисование поверх экрана: ручка, ластик, 3 цвета ===== */
 (function(){const cv=document.createElement('canvas'),ctx=cv.getContext('2d');cv.id='dr';cv.hidden=true;
  const tb=document.createElement('div');tb.id='dt';tb.className='noprint';tb.hidden=true;
@@ -201,6 +215,11 @@ init();
 const theme=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 const A={
 theme:()=>{const t=theme()=='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('ege27theme',t)}catch(e){}render();if(window.dsw)dsw()},
+login:async()=>{const r=await sb.auth.signInWithPassword({email:$('#lm').value.trim(),password:$('#lp').value});if(r.error){C.msg='Неверная почта или пароль.';return render()}try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}},
+reg:async()=>{const r=await sb.auth.signUp({email:$('#lm').value.trim(),password:$('#lp').value,options:{data:{name:$('#ln').value.trim()}}});if(r.error){C.msg=r.error.message;return render()}if(r.data.session){try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}}else{C.msg='Проверьте почту, подтвердите регистрацию и войдите.';render()}},
+out:async()=>{await sb.auth.signOut();location.reload()},
+asgv:async v=>{try{await pull()}catch(e){}go('asg',{vid:v})},
+tg:id=>{const k=S.asg.findIndex(x=>x.vid==C.vid&&x.sid==id);if(k>=0)S.asg.splice(k,1);else S.asg.push({vid:C.vid,sid:id});save()},
 open:id=>go('result',{aid:id}),
 migr:async()=>{MIG=1;for(const t of LEG.bank){if(S.bank.some(x=>x.id==t.id))continue;const n=Object.assign({},t);if(t.img&&t.img.indexOf('a:')!==0&&AS){try{const b=await iget(t.img);if(b){const r=await AS.upload(b);n.img='a:'+r.id}}catch(e){}}S.bank.push(n)}save();go('bank',{msg:'Задания перенесены в общий банк.'})},
 rmimg:()=>{if(C.img&&C.img!=C.orig)idel(C.img);C.img=null;$('#imgbox').innerHTML=''},
@@ -210,7 +229,7 @@ start:id=>{const a={id:uid(),vid:id,uid:ME||'',start:Date.now(),answers:{},self:
 jump:i=>{att().i=+i;save();const h=C.hide;render();C.hide=h},
 hide:()=>{C.hide=!C.hide;render()},
 chk:id=>{att().chk[id]=1;save();render()},
-finish:()=>{const a=att();a.done=true;a.end=Date.now();save();go('result',{aid:a.id})},
+finish:async()=>{const a=att();if(a.fin)return;a.fin=1;if(SH&&!TUT){try{await doSync();const r=await sb.rpc('finish_attempt',{p_attempt:a.id});if(r.error)throw r.error;(r.data||[]).forEach(x=>{const t=S.bank.find(q=>q.id==x.task_id);if(t){t.answer=x.answer||'';t.solution=x.solution||''}})}catch(e){NW=true}}a.done=true;a.end=Date.now();go('result',{aid:a.id})},
 delv:id=>{S.vars=S.vars.filter(v=>v.id!=id);save();render()},
 
 delt:id=>{const x=S.bank.find(t=>t.id==id);if(x&&x.img)idel(x.img);S.bank=S.bank.filter(t=>t.id!=id);save();render()},
@@ -220,7 +239,7 @@ saveT:()=>{const n=+$('#fn').value,t={id:C.eid||uid(),n,topic:$('#ft').value.tri
  if(!t.text)return fail('Введите условие задания.');if(part(n)==1&&!t.answer)return fail('Для части 1 нужен ответ.');
  if(t.code&&S.bank.some(x=>x.code==t.code&&x.id!=t.id))return fail('Задание с кодом '+t.code+' уже есть в банке.');
  if(C.eid)S.bank=S.bank.map(x=>x.id==t.id?t:x);else S.bank.push(t);if(C.orig&&C.orig!=t.img)idel(C.orig);save();go('bank',{f})},
-imp:()=>{try{const arr=JSON.parse($('#bk').value);if(!Array.isArray(arr))throw 0;arr.forEach(t=>{if(t&&t.text&&t.n&&!S.bank.some(x=>x.id==t.id))S.bank.push(Object.assign({id:uid()},t))});save();go('bank',{msg:'Импорт выполнен.'})}catch(e){C.msg='Не удалось прочитать данные. Вставьте текст резервной копии целиком.';render()}},
+imp:()=>{try{const arr=JSON.parse($('#bk').value);if(!Array.isArray(arr))throw 0;arr.forEach(t=>{if(t&&t.text&&t.n&&!S.bank.some(x=>x.id==t.id))S.bank.push(Object.assign({},t,{id:uid(),img:''}))});save();go('bank',{msg:'Импорт выполнен.'})}catch(e){C.msg='Не удалось прочитать данные. Вставьте текст резервной копии целиком.';render()}},
 demo:()=>{for(let n=1;n<=N;n++)S.bank.push({id:uid(),n,topic:T[n-1],text:'Демо-задание №'+n+'. Найдите $x$, если $x+'+n+'='+2*n+'$.',answer:String(n),solution:'Критерии: обоснованное решение — полный балл.',code:''});save();go('bank')},
 mk:()=>{const mode='auto',seed=+$('#bs').value||1,r=rng(seed);let ids=[],miss=[];
  if(mode=='manual')ids=[...document.querySelectorAll('.mk:checked')].map(x=>x.value);

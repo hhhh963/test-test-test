@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ЕГЭ 2027 · Профильная математика</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3fb;--card:#fff;--ink:#1b2740;--mut:#5d6d88;--acc:#2f5fb8;--accs:#dce7f8;--line:#d2ddee;--bad:#b0452f;--ok:#2f7a56;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161d20;--card:#1e282c;--ink:#e6eef0;--mut:#93a5ab;--acc:#8cc0cc;--accs:#27373c;--line:#2f3d42;--bad:#e09a88;--ok:#82c7a5}}
+:root[data-theme="dark"]{--bg:#161d20;--card:#1e282c;--ink:#e6eef0;--mut:#93a5ab;--acc:#8cc0cc;--accs:#27373c;--line:#2f3d42;--bad:#e09a88;--ok:#82c7a5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+[hidden]{display:none!important}
+header{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;padding:14px 20px;max-width:880px;margin:0 auto}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+main{max-width:880px;margin:0 auto;padding:4px 20px 60px}
+h1{font-size:1.65rem;font-weight:500;margin:.4em 0 .2em}h2{font-size:1.1rem;font-weight:600;margin:1.6em 0 .6em}
+.mut{color:var(--mut);font-size:.92rem}.good{color:var(--ok)}.bad{color:var(--bad)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:10px 0}.row>*{flex:1 1 140px}
+label{display:block;font-size:.9rem;color:var(--mut);margin:10px 0 0}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:4px}
+textarea{resize:vertical}input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 16px;min-height:44px;transition:background .15s}
+button:hover{background:var(--accs)}
+.tab{border:0;background:none;color:var(--mut);padding:8px 12px}.tab.on{color:var(--acc);background:var(--accs)}
+.btn{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:500}.btn:hover{background:var(--acc);opacity:.9}
+.big{width:100%;padding:18px;font-size:1.1rem;margin:16px 0 4px;border-radius:14px}
+.lnk{border:0;background:none;color:var(--acc);padding:4px 8px;min-height:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.chip{min-width:42px;padding:8px 0;min-height:40px}.chip.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}.chip.dn{border-color:var(--acc)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.txt{font-size:1.08rem;margin:10px 0 14px;overflow-x:auto;max-width:100%}.pv{min-height:2em;padding:10px 12px;border:1px dashed var(--line);border-radius:10px;margin-top:6px;overflow-x:auto}
+.it{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--line)}.it:first-child{border-top:0}
+.it .t{flex:1 1 260px;max-height:4.6em;overflow:hidden}
+.meter{height:6px;background:var(--accs);border-radius:4px;overflow:hidden;margin-top:6px}.meter i{display:block;height:100%;background:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.95rem}td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.cn{display:flex;align-items:center;gap:8px;margin:0}.cn input{width:64px;margin:0}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 16px}
+.chk{display:flex;gap:10px;align-items:flex-start;color:var(--ink);margin:0;padding:8px 0;border-top:1px solid var(--line)}.chk input{width:auto;margin-top:5px}
+input[type=file]{padding:6px}input[type=file]::file-selector-button{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 14px;margin-right:12px;cursor:pointer}
+#dr{position:fixed;left:0;top:0;width:100%;height:100%;z-index:50;touch-action:none}
+#dt{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 20px);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 10px;box-shadow:0 6px 24px rgba(20,40,80,.18)}
+#dt button{min-height:40px;padding:6px 12px}#dt button.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+#dt .sw{display:flex;gap:10px;padding:0 6px}#dt i{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;display:block}#dt i.on{outline:2px solid var(--acc);outline-offset:2px}
+#df{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;border-radius:24px;background:var(--acc);color:var(--bg);border-color:var(--acc);box-shadow:0 4px 14px rgba(20,40,80,.25)}
+.timg{display:block;max-width:100%;height:auto;margin:10px 0;border-radius:8px;background:#fff}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.pr{display:none}
+@media print{header,.noprint{display:none!important}.pr{display:block}body{background:#fff;color:#000}.pb{page-break-before:always}main{padding:0}}
+</style></head><body><div id="app"></div>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script>
+/* ===== Конфигурация ЕГЭ 2027 (проект ФИПИ) — правьте здесь ===== */
+const CFG={time:235,max:33,part1Last:13,scale:null, // scale: {первичный:тестовый} — после утверждения шкалы
+ topics:['Планиметрия','Векторы','Стереометрия','Простая вероятность','Сложная вероятность','Случайная величина, мат. ожидание','Простейшие уравнения','Вычисления и преобразования','Производная и первообразная','Прикладная задача','Текстовая задача','Графики функций','Финансовая задача','Уравнение','Стереометрия','Неравенство','Математическое моделирование','Планиметрия','Задача с параметром','Теория чисел'],
+ pts:[1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,2,2,3,4,4]};
+const T=CFG.topics,M=CFG.pts,N=T.length,part=n=>n<=CFG.part1Last?1:2;
+const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=s=>esc(s).replace(/\n/g,'<br>'),uid=()=>Math.random().toString(36).slice(2,9);
+const norm=s=>String(s||'').trim().replace(/\s+/g,'').replace(/,/g,'.');
+const typeset=()=>{try{window.MathJax&&MathJax.typesetPromise&&MathJax.typesetPromise()}catch(e){}};
+addEventListener('load',typeset);
+function load(){try{return JSON.parse(localStorage.getItem('ege27'))||{bank:[],vars:[],att:[]}}catch(e){return{bank:[],vars:[],att:[]}}}
+function save(){if(!SH){try{localStorage.setItem('ege27',JSON.stringify(S))}catch(e){}}else sync()}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+let S=load(),V='home',C={},tm=null;
+const att=()=>S.att.find(x=>x.id==C.aid),vt=v=>v.ids.map(id=>S.bank.find(t=>t.id==id)).filter(Boolean);
+const ok=(a,t)=>norm(a.answers[t.id])!==''&&norm(a.answers[t.id])==norm(t.answer);
+function score(a){const v=S.vars.find(x=>x.id==a.vid);let p1=0,p2=0;vt(v).forEach(t=>{if(part(t.n)==1){if(ok(a,t))p1++}else p2+=a.self[t.id]||0});return{p1,p2,total:p1+p2}}
+const hm=m=>Math.floor(m/60)+' ч '+(m%60)+' мин';
+const fT=r=>{const h=Math.floor(r/3600),m=Math.floor(r%3600/60),s=r%60;return h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
+const nOpts=(sel,all)=>(all?'<option value="0">Все номера</option>':'')+T.map((x,i)=>`<option value="${i+1}" ${sel==i+1?'selected':''}>${i+1} · ${esc(x)}</option>`).join('');
+
+function go(v,c){if(!TUT&&!['home','solve','result'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
+function render(){clearInterval(tm);
+ const tabs=TUT?[['home','Главная'],['bank','Банк'],['build','Конструктор']].concat(SH?[['res','Ученики']]:[]):[['home','Главная']];
+ $('#app').innerHTML=`<header class="noprint"><b>ЕГЭ 2027 · профильная математика</b><span class="mut" id="st">${stat()}</span><nav>${tabs.map(([k,l])=>`<button class="tab ${V==k?'on':''}" data-a="go" data-v="${k}">${l}</button>`).join('')}<button class="tab" data-a="theme">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</button></nav></header><main>${VIEWS[V]()}</main>`;
+ if(V=='solve'){tick();tm=setInterval(tick,1000)}
+ if(V=='bank')fillList();hydrate();
+ typeset()}
+function tick(){const a=att();if(!a)return;const v=S.vars.find(x=>x.id==a.vid),el=$('#tm');if(!el||!v.limit)return;
+ const r=v.limit*60-Math.floor((Date.now()-a.start)/1000);if(r<=0){A.finish();return}el.textContent=C.hide?'скрыт':fT(r)}
+
+const VIEWS={
+home(){const a=S.att.filter(x=>!x.done).slice(-1)[0],vs=S.vars.slice().reverse();
+ return `<h1>Добрый день</h1><p class="mut">${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p>
+ ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:`<button class="btn big" data-a="go" data-v="${S.bank.length?'build':'bank'}">${S.bank.length?'Составить первый вариант':'Добавить первое задание'}</button>`}
+ <h2>Варианты</h2>${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
+ <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')||'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Репетитор ещё не опубликовал варианты.')+'</p>'}`},
+
+bank(){const f=C.f||{n:1,topic:T[0],diff:'П'},e=C.e||{};
+ return `<h1>Банк заданий</h1><p class="mut">В банке: ${S.bank.length}. ${C.msg?`<span class="bad">${esc(C.msg)}</span>`:''}</p>
+ <div class="card"><h2 style="margin-top:0">${C.eid?'Редактирование задания':'Новое задание'}</h2>
+ <div class="row"><label>Номер<select id="fn">${nOpts(f.n)}</select></label><label>Тема<input id="ft" value="${esc(f.topic)}"></label></div>
+ <label>Условие (формулы в долларах: $x^2+1$)<textarea id="fx" rows="4">${esc(e.text)}</textarea></label><div class="pv" id="pv">${fmt(e.text)}</div>
+ <label>Картинка к условию<input type="file" id="fimg" accept="image/*"></label><p class="mut" style="margin:4px 0">Можно вставить скриншот: скопируйте его и нажмите Ctrl+V на этой странице.</p><div id="imgbox">${C.img?imgHtml(C.img):''}</div>
+ <label id="la" ${f.n>CFG.part1Last?'hidden':''}>Ответ<input id="fa" value="${esc(e.answer)}"></label>
+ <label>Решение и критерии (необязательно)<textarea id="fs" rows="3">${esc(e.solution)}</textarea></label>
+ <div class="row"><label>Код задания ФИПИ<input id="fc" value="${esc(e.code)}"></label></div>
+ <div class="row"><button class="btn" data-a="saveT">${C.eid?'Сохранить изменения':'Сохранить и добавить следующее'}</button>${C.eid?'<button data-a="go" data-v="bank">Отмена</button>':''}</div></div>
+ <h2>Все задания</h2><div class="row"><label>Номер<select id="flt">${nOpts(0,1)}</select></label><label>Поиск<input id="fq" placeholder="текст или код"></label></div><div class="card" id="lst"></div>
+ ${SH&&TUT&&LEG&&LEG.bank.length&&!MIG?`<div class="card"><b>На этом устройстве найдено заданий: ${LEG.bank.length}</b><p class="mut">Перенесите их в общий банк, чтобы они были доступны с любого устройства.</p><button class="btn" data-a="migr">Перенести в общий банк</button></div>`:''}<details class="card"><summary>Резервная копия и демо</summary><p class="mut">Скопируйте текст и сохраните у себя (картинки в копию не входят: они хранятся только в этом браузере). Для восстановления вставьте его в поле и нажмите «Импортировать».</p>
+ <textarea id="bk" rows="5">${esc(JSON.stringify(S.bank))}</textarea><div class="row"><button data-a="imp">Импортировать</button><button data-a="demo">Загрузить демо-примеры</button></div></details>`},
+
+build(){const cnt=n=>S.bank.filter(t=>t.n==n).length;
+ return `<h1>Конструктор вариантов</h1>${C.msg?`<p class="bad">${esc(C.msg)}</p>`:''}
+ <div class="card"><div class="row"><label>Название<input id="bn" placeholder="Вариант ${S.vars.length+1}"></label>
+ <label>Время<select id="bl"><option value="${CFG.time}">Как на ЕГЭ: ${hm(CFG.time)}</option><option value="0">Без ограничения времени</option></select></label><input id="bs" type="hidden" value="${Math.floor(Math.random()*99999)}"></div>
+ 
+ </div>
+ <div class="card" id="aut"><b>Сколько задач на каждый номер</b><div class="grid" style="margin-top:8px">${T.map((x,i)=>`<label class="cn"><input type="number" min="0" max="5" data-n="${i+1}" value="${cnt(i+1)?1:0}"><span>${i+1}. ${esc(x)} <span class="mut">(в банке: ${cnt(i+1)})</span></span></label>`).join('')}</div></div>
+ 
+ <button class="btn big" data-a="mk">Создать вариант</button>`},
+
+solve(){const a=att(),v=S.vars.find(x=>x.id==a.vid),ts=vt(v),t=ts[a.i];if(!t)return'<p>В варианте нет задач.</p>';
+ const p1=part(t.n)==1,k=!!a.chk[t.id];
+ return `<div class="bar"><b>${esc(v.name)}</b>${v.limit?`<span>⏱ <span id="tm"></span> <button class="lnk" data-a="hide">${C.hide?'показать':'скрыть'}</button></span>`:'<span class="mut">'+(v.mode=='exam'?'без ограничения времени':'тренировка')+'</span>'}</div>
+ <div class="chips">${ts.map((x,i)=>`<button class="chip ${i==a.i?'on':''} ${norm(a.answers[x.id])?'dn':''}" data-a="jump" data-v="${i}">${x.n}</button>`).join('')}</div>
+ <div class="card"><div class="mut">№${t.n} · ${esc(t.topic||T[t.n-1])} · ${M[t.n-1]} б.</div><div class="txt">${fmt(t.text)}</div>${timg(t)}
+ ${p1?`<input data-f="ans" data-t="${t.id}" value="${esc(a.answers[t.id])}" placeholder="Ответ" inputmode="decimal" style="max-width:280px">`:`<textarea data-f="ans" data-t="${t.id}" rows="6" placeholder="Запишите ход решения. Подробное решение можно оформить на бумаге.">${esc(a.answers[t.id])}</textarea>`}
+ ${k&&p1?(ok(a,t)?'<p class="good">Верно</p>':`<p class="bad">Пока неверно. Правильный ответ: ${esc(t.answer)}</p>`):''}
+ <div class="row" style="margin-top:16px">${a.i>0?'<button data-a="jump" data-v="'+(a.i-1)+'">Назад</button>':''}${p1&&v.mode=='train'?'<button data-a="chk" data-v="'+t.id+'">Проверить</button>':''}${a.i<ts.length-1?'<button class="btn" data-a="jump" data-v="'+(a.i+1)+'">Дальше</button>':''}<button data-a="finish">Завершить</button></div></div>`},
+
+result(){const a=att(),v=S.vars.find(x=>x.id==a.vid),ts=vt(v),s=score(a),mx=ts.reduce((q,t)=>q+M[t.n-1],0);
+ return `<h1>Результат: ${esc(v.name)}</h1><div class="card"><div style="font-size:2rem"><span id="tot">${s.total}</span> из ${mx}</div>
+ <p class="mut">Часть 1 проверена автоматически, в части 2 поставьте баллы по критериям. ${CFG.scale?'':'Шкала перевода в тестовые баллы на 2027 год будет утверждена весной 2027.'}</p></div>
+ <div class="card tw"><table><tr><th>№</th><th>Ответ ученика</th><th>Итог</th></tr>${ts.map(t=>part(t.n)==1?`<tr><td>${t.n}</td><td>${esc(a.answers[t.id])||'—'}</td><td class="${ok(a,t)?'good':'bad'}">${ok(a,t)?'верно · 1':'неверно · правильный ответ '+esc(t.answer)}</td></tr>`:
+ `<tr><td>${t.n}</td><td>${fmt(a.answers[t.id])||'—'}${t.solution?`<details><summary class="mut">Эталон и критерии</summary>${fmt(t.solution)}</details>`:''}</td><td><input type="number" min="0" max="${M[t.n-1]}" data-f="self" data-t="${t.id}" data-m="${M[t.n-1]}" value="${a.self[t.id]||0}" style="width:70px"> из ${M[t.n-1]}</td></tr>`).join('')}</table></div>
+ <button class="btn" data-a="go" data-v="home">На главную</button>`},
+
+res(){const l=S.att.filter(a=>a.done).sort((x,y)=>(y.end||0)-(x.end||0));
+ return `<h1>Результаты учеников</h1><p class="mut">Откройте работу, чтобы проверить часть 2 и поставить баллы.</p><div class="card">${l.map(a=>{const v=S.vars.find(x=>x.id==a.vid);return `<div class="it"><div><b>${esc(PN[a.uid]||'Ученик')}</b><div class="mut">${esc(v?v.name:'вариант удалён')} · ${a.end?new Date(a.end).toLocaleDateString('ru-RU'):''}</div></div><div class="row" style="flex:0 0 auto;margin:0;align-items:center"><span>${v?score(a).total+' б.':''}</span>${v?`<button data-a="open" data-v="${a.id}">Открыть</button>`:''}</div></div>`}).join('')||'<span class="mut">Пока нет завершённых работ.</span>'}</div>`},
+stats(){const rows=T.map((x,i)=>{const n=i+1,ts=S.bank.filter(t=>t.n==n);let g=0,tot=0;
+  S.att.filter(a=>a.done).forEach(a=>{const v=S.vars.find(q=>q.id==a.vid);if(!v)return;vt(v).filter(t=>t.n==n).forEach(t=>{tot+=M[i];g+=part(n)==1?(ok(a,t)?1:0):(a.self[t.id]||0)})});
+  const p=tot?Math.round(g/tot*100):0;return `<div class="it"><div style="flex:1 1 220px"><b>${n}.</b> ${esc(x)}<div class="meter"><i style="width:${p}%"></i></div></div><div class="mut">${tot?p+'% верно':'нет решений'} · в банке: ${ts.length}</div></div>`}).join('');
+ return `<h1>Прогресс</h1><p class="mut">По всем завершённым вариантам на этом устройстве.</p><div class="card">${rows}</div>`},
+
+print(){const v=S.vars.find(x=>x.id==C.vid),ts=vt(v);
+ return `<div class="noprint"><button class="btn" onclick="print()">Печать</button> <button data-a="go" data-v="home">Назад</button></div><div class="pr" style="display:block"><h1>${esc(v.name)}</h1><p>Время: ${v.limit?hm(v.limit):'не ограничено'}</p>
+ ${ts.map(t=>`<p><b>${t.n}.</b> ${fmt(t.text)}</p>`).join('')}<div class="pb"><h2>Ответы</h2><table>${ts.map(t=>`<tr><td>${t.n}</td><td>${part(t.n)==1?esc(t.answer):fmt(t.solution||'развёрнутое решение')}</td></tr>`).join('')}</table></div></div>`}};
+
+function fillList(){const el=$('#lst');if(!el)return;const n=+($('#flt')||{}).value||0,q=(($('#fq')||{}).value||'').toLowerCase();
+ const l=S.bank.filter(t=>(!n||t.n==n)&&(!q||(t.text+t.code).toLowerCase().includes(q))).sort((a,b)=>a.n-b.n);
+ el.innerHTML=l.map(t=>`<div class="it"><div class="t"><b>№${t.n}</b>${t.code?' · '+esc(t.code):''}${t.img?' · с рисунком':''}<br>${fmt(t.text)}</div><div class="row" style="flex:0 0 auto;margin:0"><button data-a="edit" data-v="${t.id}">Изменить</button><button data-a="delt" data-v="${t.id}">Удалить</button></div></div>`).join('')||'<span class="mut">Здесь пока пусто. Заполните форму выше, и задание появится в списке.</span>';typeset()}
+
+try{const st=localStorage.getItem('ege27theme');if(st)document.documentElement.dataset.theme=st}catch(e){}
+/* ===== Картинки: хранятся в IndexedDB браузера, в задаче — только id ===== */
+const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open('ege27img',1);r.onupgradeneeded=()=>r.result.createObjectStore('i');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const iput=async(k,b)=>{const d=await idb();return new Promise((res,rej)=>{const t=d.transaction('i','readwrite');t.objectStore('i').put(b,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})};
+const iget=async k=>{const d=await idb();return new Promise(res=>{const q=d.transaction('i').objectStore('i').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})};
+const idel=async k=>{try{const d=await idb();d.transaction('i','readwrite').objectStore('i').delete(k)}catch(e){}};
+const urls={},timg=t=>t.img?`<img class="timg" data-img="${t.img}" alt="Рисунок к заданию">`:'';
+const imgHtml=k=>`<img class="timg" data-img="${k}" alt="" style="max-height:260px;width:auto"><button data-a="rmimg">Убрать картинку</button>`;
+async function hydrate(){for(const im of document.querySelectorAll('img[data-img]')){const k=im.dataset.img;if(k.indexOf('a:')==0){im.src='/_blob/'+k.slice(2);continue}try{if(!urls[k]){const b=await iget(k);if(b)urls[k]=URL.createObjectURL(b)}if(urls[k])im.src=urls[k]}catch(e){}}}
+const shrink=f=>new Promise((res,rej)=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.85)};im.onerror=rej;im.src=u});
+async function pick(f){if(!f||!$('#imgbox'))return;try{const b=await shrink(f);let k;if(AS){const r=await AS.upload(b);k='a:'+r.id}else{k=uid();await iput(k,b)}if(C.img&&C.img!=C.orig)idel(C.img);C.img=k;$('#imgbox').innerHTML=imgHtml(k);hydrate()}catch(e){$('#imgbox').innerHTML='<p class="bad">Не удалось сохранить картинку. Попробуйте другой файл (JPG или PNG).</p>'}}
+document.addEventListener('paste',e=>{if(V!='bank')return;const it=[...((e.clipboardData||{}).items||[])].find(i=>i.type.indexOf('image/')==0);if(it){e.preventDefault();pick(it.getAsFile())}});
+/* ===== Общий режим: db + assets + user. Без входа работает локально ===== */
+let SH=false,TUT=true,NW=false,MIG=0,DB=null,AS=null,UU=null,ME=null,LEG=null,SY={bank:{},vars:{},att:{}},PN={},tmr=null,got=0;
+const stat=()=>!SH?'Локальный режим: данные только на этом устройстве':NW?'Результаты не сохраняются: у вас доступ только для просмотра':TUT?'Репетитор · общий банк':'Ученик';
+const mark=()=>{const e=$('#st');if(e)e.textContent=stat()},wr=p=>p.catch(()=>{NW=true;mark()}),cl=o=>JSON.parse(JSON.stringify(o));
+const ref=()=>{if(V=='home'||V=='res')render();else if(V=='bank')fillList()};
+function sync(){if(!SH)return;
+ if(TUT)for(const c of ['bank','vars']){const cur={};S[c].forEach(x=>{cur[x.id]=1;const j=JSON.stringify(x);if(SY[c][x.id]!==j){SY[c][x.id]=j;wr(DB.collection(c).doc(x.id).set(x))}});for(const id in SY[c])if(!cur[id]){delete SY[c][id];wr(DB.collection(c).doc(id).delete())}}
+ clearTimeout(tmr);tmr=setTimeout(()=>{const g={};S.att.forEach(a=>{const u=a.uid||ME;(g[u]=g[u]||[]).push(a)});for(const u in g){const j=JSON.stringify(g[u]);if(SY.att[u]!==j){SY.att[u]=j;wr(DB.doc('att/'+u).set({uid:u,runs:g[u]}))}}},500)}
+function namesFor(){if(!UU||!TUT)return;const ids=[...new Set(S.att.map(a=>a.uid).filter(Boolean))];if(ids.length)UU.profiles(ids).then(p=>{ids.forEach(i=>{if(p[i])PN[i]=p[i].name});if(V=='res')render()}).catch(()=>{})}
+async function init(){try{if(!window.claude||!claude.use)return;DB=await claude.use('db');UU=await claude.use('user');AS=await claude.use('assets');
+ if(UU){ME=await UU.id();TUT=await UU.canEdit()}
+ if(!DB||!ME)return;SH=true;LEG=load();S={bank:[],vars:[],att:[]};const er=()=>{};
+ for(const c of ['bank','vars'])DB.collection(c).onSnapshot(s=>{S[c]=s.docs.map(d=>cl(d.data()));SY[c]={};S[c].forEach(x=>SY[c][x.id]=JSON.stringify(x));ref()},er);
+ if(TUT)DB.collection('att').onSnapshot(s=>{if(C.aid)return;S.att=[];s.docs.forEach(d=>{const r=cl(d.data()).runs||[];S.att.push(...r);SY.att[d.id]=JSON.stringify(r)});namesFor();ref()},er);
+ else DB.doc('att/'+ME).onSnapshot(s=>{if(got++)return;const d=s.data();S.att=d?(cl(d).runs||[]):[];SY.att[ME]=JSON.stringify(S.att);ref()},er);
+ render()}catch(e){}}
+init();
+/* ===== Рисование поверх экрана: ручка, ластик, 3 цвета ===== */
+(function(){const cv=document.createElement('canvas'),ctx=cv.getContext('2d');cv.id='dr';cv.hidden=true;
+ const tb=document.createElement('div');tb.id='dt';tb.className='noprint';tb.hidden=true;
+ tb.innerHTML='<button data-t="pen" class="on">Ручка</button><button data-t="er">Ластик</button><span class="sw"><i data-c="b" title="Чёрный"></i><i data-c="u" title="Синий"></i><i data-c="r" title="Красный"></i></span><button data-t="sc">Листать</button><button data-t="clr">Очистить</button><button data-t="x">Закрыть</button>';
+ const fb=document.createElement('button');fb.id='df';fb.className='noprint';fb.textContent='✎ Рисовать';document.body.append(cv,tb,fb);
+ let tool='pen',col='b',on=false,lx=0,ly=0,dpr=1;
+ const P=()=>{const d=theme()=='dark';return{b:d?'#f2f2f2':'#000',u:d?'#6ea2ff':'#1d4fd8',r:d?'#ff7070':'#d62828'}};
+ const sw=()=>{const p=P();tb.querySelectorAll('i').forEach(i=>{i.style.background=p[i.dataset.c];i.classList.toggle('on',i.dataset.c==col)})};window.dsw=()=>{sw();redraw()};
+ function size(){dpr=window.devicePixelRatio||1;cv.width=Math.round(innerWidth*dpr);cv.height=Math.round(innerHeight*dpr);redraw()}
+ function set(t){tool=t;tb.querySelectorAll('[data-t]').forEach(b=>{if(b.dataset.t=='pen'||b.dataset.t=='er'||b.dataset.t=='sc')b.classList.toggle('on',b.dataset.t==t)});cv.style.pointerEvents=t=='sc'?'none':'auto';cv.style.cursor=t=='er'?'cell':'crosshair'}
+ function open(){size();cv.hidden=false;tb.hidden=false;fb.hidden=true;sw();set('pen')}
+ function close(){cv.hidden=true;tb.hidden=true;fb.hidden=false;segs.length=0;ctx.clearRect(0,0,cv.width,cv.height)}
+ const segs=[];
+ function seg(t,k,a,b,c,d){ctx.lineCap='round';ctx.lineJoin='round';if(t=='er'){ctx.globalCompositeOperation='destination-out';ctx.lineWidth=28*dpr}else{ctx.globalCompositeOperation='source-over';ctx.strokeStyle=P()[k];ctx.lineWidth=3*dpr}ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(c,d);ctx.stroke()}
+ function stroke(a,b,c,d){segs.push([tool,col,a,b,c,d]);seg(tool,col,a,b,c,d)}
+ function redraw(){ctx.clearRect(0,0,cv.width,cv.height);segs.forEach(s=>seg(...s))}
+ cv.addEventListener('pointerdown',e=>{if(tool=='sc')return;on=true;try{cv.setPointerCapture(e.pointerId)}catch(x){}lx=e.clientX*dpr;ly=e.clientY*dpr;stroke(lx,ly,lx,ly);e.preventDefault()});
+ cv.addEventListener('pointermove',e=>{if(!on)return;const x=e.clientX*dpr,y=e.clientY*dpr;stroke(lx,ly,x,y);lx=x;ly=y});
+ ['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>{on=false}));
+ tb.addEventListener('click',e=>{const i=e.target.closest('[data-c]'),b=e.target.closest('[data-t]');if(i){col=i.dataset.c;if(tool!='pen')set('pen');sw()}else if(b){const t=b.dataset.t;if(t=='clr'){segs.length=0;redraw()}else if(t=='x')close();else set(t)}});
+ fb.addEventListener('click',open);addEventListener('resize',()=>{if(!cv.hidden)size()});addEventListener('keydown',e=>{if(e.key=='Escape'&&!cv.hidden)close()})})();
+const theme=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+const A={
+theme:()=>{const t=theme()=='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('ege27theme',t)}catch(e){}render();if(window.dsw)dsw()},
+open:id=>go('result',{aid:id}),
+migr:async()=>{MIG=1;for(const t of LEG.bank){if(S.bank.some(x=>x.id==t.id))continue;const n=Object.assign({},t);if(t.img&&t.img.indexOf('a:')!==0&&AS){try{const b=await iget(t.img);if(b){const r=await AS.upload(b);n.img='a:'+r.id}}catch(e){}}S.bank.push(n)}save();go('bank',{msg:'Задания перенесены в общий банк.'})},
+rmimg:()=>{if(C.img&&C.img!=C.orig)idel(C.img);C.img=null;$('#imgbox').innerHTML=''},
+go:v=>go(v),
+resume:id=>go('solve',{aid:id}),
+start:id=>{const a={id:uid(),vid:id,uid:ME||'',start:Date.now(),answers:{},self:{},chk:{},done:false,i:0};S.att.push(a);save();go('solve',{aid:a.id})},
+jump:i=>{att().i=+i;save();const h=C.hide;render();C.hide=h},
+hide:()=>{C.hide=!C.hide;render()},
+chk:id=>{att().chk[id]=1;save();render()},
+finish:()=>{const a=att();a.done=true;a.end=Date.now();save();go('result',{aid:a.id})},
+delv:id=>{S.vars=S.vars.filter(v=>v.id!=id);save();render()},
+
+delt:id=>{const x=S.bank.find(t=>t.id==id);if(x&&x.img)idel(x.img);S.bank=S.bank.filter(t=>t.id!=id);save();render()},
+edit:id=>{const t=S.bank.find(x=>x.id==id);go('bank',{eid:id,e:t,img:t.img,orig:t.img,f:{n:t.n,topic:t.topic,diff:t.diff}})},
+saveT:()=>{const n=+$('#fn').value,t={id:C.eid||uid(),n,topic:$('#ft').value.trim()||T[n-1],text:$('#fx').value.trim(),answer:$('#fa').value.trim(),solution:$('#fs').value.trim(),code:$('#fc').value.trim(),img:C.img||''};
+ const f={n,topic:t.topic,diff:t.diff},fail=m=>{C.msg=m;C.f=f;C.e=t;const y=scrollY;render();scrollTo(0,y)};
+ if(!t.text)return fail('Введите условие задания.');if(part(n)==1&&!t.answer)return fail('Для части 1 нужен ответ.');
+ if(t.code&&S.bank.some(x=>x.code==t.code&&x.id!=t.id))return fail('Задание с кодом '+t.code+' уже есть в банке.');
+ if(C.eid)S.bank=S.bank.map(x=>x.id==t.id?t:x);else S.bank.push(t);if(C.orig&&C.orig!=t.img)idel(C.orig);save();go('bank',{f})},
+imp:()=>{try{const arr=JSON.parse($('#bk').value);if(!Array.isArray(arr))throw 0;arr.forEach(t=>{if(t&&t.text&&t.n&&!S.bank.some(x=>x.id==t.id))S.bank.push(Object.assign({id:uid()},t))});save();go('bank',{msg:'Импорт выполнен.'})}catch(e){C.msg='Не удалось прочитать данные. Вставьте текст резервной копии целиком.';render()}},
+demo:()=>{for(let n=1;n<=N;n++)S.bank.push({id:uid(),n,topic:T[n-1],text:'Демо-задание №'+n+'. Найдите $x$, если $x+'+n+'='+2*n+'$.',answer:String(n),solution:'Критерии: обоснованное решение — полный балл.',code:''});save();go('bank')},
+mk:()=>{const mode='auto',seed=+$('#bs').value||1,r=rng(seed);let ids=[],miss=[];
+ if(mode=='manual')ids=[...document.querySelectorAll('.mk:checked')].map(x=>x.value);
+ else document.querySelectorAll('#aut [data-n]').forEach(i=>{const n=+i.dataset.n,c=+i.value||0;if(!c)return;const p=S.bank.filter(t=>t.n==n).map(t=>[r(),t.id]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);if(!p.length)miss.push(n);ids.push(...p.slice(0,c))});
+ if(!ids.length)return go('build',{msg:'Нет задач для варианта. Добавьте задания в банк или отметьте задачи вручную.'});
+ ids.sort((a,b)=>S.bank.find(t=>t.id==a).n-S.bank.find(t=>t.id==b).n);
+ S.vars.push({id:uid(),name:$('#bn').value.trim()||'Вариант '+(S.vars.length+1),mode:'exam',limit:+$('#bl').value,seed,ids});save();A.start(S.vars[S.vars.length-1].id);return;
+ go('home')}};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset.v)});
+document.addEventListener('input',e=>{const t=e.target,f=t.dataset.f;
+ if(f=='ans'){att().answers[t.dataset.t]=t.value;save();const c=document.querySelector('.chip.on');if(c)c.classList.toggle('dn',!!norm(t.value))}
+ else if(f=='self'){att().self[t.dataset.t]=Math.max(0,Math.min(+t.dataset.m,+t.value||0));save();$('#tot').textContent=score(att()).total}
+ else if(t.id=='fx'){$('#pv').innerHTML=fmt(t.value);typeset()}else if(t.id=='fq')fillList()});
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.id=='fimg'){pick(t.files[0]);t.value=''}else if(t.id=='fn'){$('#ft').value=T[t.value-1];$('#la').hidden=+t.value>CFG.part1Last}
+ else if(t.id=='flt')fillList();else if(t.name=='mode'){$('#man').hidden=t.value!='manual';$('#aut').hidden=t.value=='manual'}});
+render();
+</script></body></html>

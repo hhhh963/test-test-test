@@ -42,7 +42,15 @@ button:hover{background:var(--accs)}
 .cn{display:flex;align-items:center;gap:8px;margin:0}.cn input{width:64px;margin:0}.grid{display:block;columns:220px;column-gap:20px}.cn{break-inside:avoid;margin-bottom:8px}
 .chk{display:flex;gap:10px;align-items:flex-start;color:var(--ink);margin:0;padding:8px 0;border-top:1px solid var(--line)}.chk input{width:auto;margin-top:5px}
 input[type=file]{padding:6px}input[type=file]::file-selector-button{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 14px;margin-right:12px;cursor:pointer}
-#dr{position:fixed;left:0;top:0;width:100%;height:100%;z-index:50;touch-action:none}
+button:disabled{opacity:.5;cursor:not-allowed}button:disabled:hover{background:var(--card)}.btn:disabled:hover{background:var(--acc)}
+.dtb{position:sticky;top:calc(env(safe-area-inset-top,0px) + 4px);z-index:60;display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 8px;margin:0 0 12px;width:max-content;max-width:100%}
+.dtb button{min-height:38px;padding:5px 10px}.dtb button.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+.dtb .sw{display:flex;gap:8px;padding:0 4px}.dtb i{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);cursor:pointer;display:block}.dtb i.on{outline:2px solid var(--acc);outline-offset:2px}
+.okc{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok);background:color-mix(in srgb,var(--ok) 9%,var(--card))}
+.badc{border-color:var(--bad);box-shadow:0 0 0 2px var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--card))}
+#md{position:fixed;inset:0;z-index:100;background:rgba(10,20,40,.45);display:flex;align-items:center;justify-content:center;padding:20px}
+#md .mb{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;max-width:340px;width:100%}#md p{margin:0 0 14px;font-size:1.05rem}
+#dr{position:fixed;left:0;top:0;width:100%;height:100%;z-index:50;touch-action:none;pointer-events:none}
 #dt{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 20px);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 10px;box-shadow:0 6px 24px rgba(20,40,80,.18)}
 #dt button{min-height:40px;padding:6px 12px}#dt button.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
 #dt .sw{display:flex;gap:10px;padding:0 6px}#dt i{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;display:block}#dt i.on{outline:2px solid var(--acc);outline-offset:2px}
@@ -80,7 +88,7 @@ const nOpts=(sel,all)=>(all?'<option value="0">Все номера</option>':'')
 function go(v,c){if(!TUT&&!['home','solve','result','bank','build','one'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
 function render(){clearInterval(tm);if(V=='login'){$('#app').innerHTML='<main>'+VIEWS.login()+'</main>';if(window.dfb)dfb();return}
  const tabs=[['home','Главная'],['bank','Банк заданий'],['build','Конструктор']].concat(SH&&TUT?[['res','Ученики']]:[]);
- $('#app').innerHTML=`<header class="noprint"><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span><nav>${tabs.map(([k,l])=>`<button class="tab ${V==k?'on':''}" data-a="go" data-v="${k}">${l}</button>`).join('')}${SH?'<button class="tab" data-a="out">Выйти</button>':''}<button class="tab" data-a="theme">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</button></nav></header><main>${VIEWS[V]()}</main>`;
+ $('#app').innerHTML=`<header class="noprint"><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span><nav>${tabs.map(([k,l])=>`<button class="tab ${V==k?'on':''}" data-a="go" data-v="${k}">${l}</button>`).join('')}<button class="tab" data-a="theme">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</button>${SH?'<button class="tab" data-a="out">Выйти</button>':''}</nav></header><main>${VIEWS[V]()}</main>`;
  if(V=='solve'){tick();tm=setInterval(tick,1000)}
  if(V=='bank')fillList();hydrate();if(window.dfb)dfb();
  typeset()}
@@ -89,7 +97,7 @@ function tick(){const a=att();if(!a)return;const v=S.vars.find(x=>x.id==a.vid),e
 
 const VIEWS={
 home(){const a=S.att.filter(x=>!x.done).slice(-1)[0],vs=S.vars.filter(v=>!v.own||v.own==ME).reverse();
- return `<h1>Добрый день</h1><p class="mut">${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p>
+ return `<h1>Здравствуйте${NAME?', '+esc(NAME):''}</h1><p class="mut">${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p>
  ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:`${TUT?`<button class="btn big" data-a="go" data-v="${S.bank.length?'build':'bank'}">${S.bank.length?'Составить первый вариант':'Добавить первое задание'}</button>`:S.bank.length?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}`}
  <h2>Варианты</h2>${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
  <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT||v.own==ME?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')||'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Репетитор ещё не опубликовал варианты.')+'</p>'}`},
@@ -122,7 +130,7 @@ solve(){const a=att(),v=S.vars.find(x=>x.id==a.vid),ts=vt(v),t=ts[a.i];if(!t)ret
  const p1=part(t.n)==1,k=!!a.chk[t.id];
  return `<div class="bar"><b>${esc(v.name)}</b>${v.limit?`<span>⏱ <span id="tm"></span> <button class="lnk" data-a="hide">${C.hide?'показать':'скрыть'}</button></span>`:'<span class="mut">'+(v.mode=='exam'?'без ограничения времени':'тренировка')+'</span>'}</div>
  <div class="chips">${ts.map((x,i)=>`<button class="chip ${i==a.i?'on':''} ${norm(a.answers[x.id])?'dn':''}" data-a="jump" data-v="${i}">${x.n}</button>`).join('')}</div>
- <div class="card"><div class="mut">№${t.n} · ${esc(t.topic||T[t.n-1])} · ${M[t.n-1]} б.</div><div class="txt">${fmt(t.text)}</div>${timg(t)}
+ <div class="card">${dtb()}<div class="mut">№${t.n} · ${esc(t.topic||T[t.n-1])} · ${M[t.n-1]} б.</div><div class="txt">${fmt(t.text)}</div>${timg(t)}
  ${p1?`<input data-f="ans" data-t="${t.id}" value="${esc(a.answers[t.id])}" placeholder="Ответ" inputmode="decimal" style="max-width:280px">`:`<textarea data-f="ans" data-t="${t.id}" rows="6" placeholder="Запишите ход решения. Подробное решение можно оформить на бумаге.">${esc(a.answers[t.id])}</textarea>`}
  ${k&&p1?(ok(a,t)?'<p class="good">Верно</p>':`<p class="bad">Пока неверно. Правильный ответ: ${esc(t.answer)}</p>`):''}
  <div class="row" style="margin-top:16px">${a.i>0?'<button data-a="jump" data-v="'+(a.i-1)+'">Назад</button>':''}${p1&&v.mode=='train'?'<button data-a="chk" data-v="'+t.id+'">Проверить</button>':''}${a.i<ts.length-1?'<button class="btn" data-a="jump" data-v="'+(a.i+1)+'">Дальше</button>':''}<button data-a="finish">Завершить</button></div></div>`},
@@ -155,10 +163,12 @@ print(){const v=S.vars.find(x=>x.id==C.vid),ts=vt(v);
  return `<div class="noprint"><button class="btn" onclick="print()">Печать</button> <button data-a="go" data-v="home">Назад</button></div><div class="pr" style="display:block"><h1>${esc(v.name)}</h1><p>Время: ${v.limit?hm(v.limit):'не ограничено'}</p>
  ${ts.map(t=>`<p><b>${t.n}.</b> ${fmt(t.text)}</p>`).join('')}<div class="pb"><h2>Ответы</h2><table>${ts.map(t=>`<tr><td>${t.n}</td><td>${part(t.n)==1?esc(t.answer):fmt(t.solution||'развёрнутое решение')}</td></tr>`).join('')}</table></div></div>`}};
 
+const BS={},BR={},BV={};
+document.addEventListener('keydown',e=>{const t=e.target;if(e.key=='Enter'&&t.id&&t.id.indexOf('ba-')==0){const b=document.querySelector('[data-a="bchk"][data-v="'+t.id.slice(3)+'"]');if(b&&!b.disabled)b.click()}});
 function fillList(){const el=$('#lst');if(!el)return;const n=+($('#flt')||{}).value||0,q=(($('#fq')||{}).value||'').toLowerCase(),lim=C.lim||20;
  const l=S.bank.filter(t=>(!n||t.n==n)&&(!q||(t.text+t.code).toLowerCase().includes(q))).sort((a,b)=>a.n-b.n);
- el.innerHTML=l.slice(0,lim).map(t=>`<div class="card"><div class="bar"><span class="mut"><b>№${t.n}</b> · ${esc(t.topic||T[t.n-1])}${t.code?' · '+esc(t.code):''}</span>${TUT?`<span class="row" style="flex:0 0 auto;margin:0"><button data-a="edit" data-v="${t.id}">Изменить</button><button data-a="delt" data-v="${t.id}">Удалить</button></span>`:''}</div><div class="txt">${fmt(t.text)}</div>${timg(t)}${part(t.n)==1?`<div class="row"><input id="ba-${t.id}" placeholder="Ответ" inputmode="decimal" style="max-width:240px"><button class="btn" data-a="bchk" data-v="${t.id}" style="flex:0 0 auto">Проверить</button></div>`:`<div class="row"><button class="btn" data-a="bchk" data-v="${t.id}" style="flex:0 0 auto">Показать решение</button></div>`}<div id="br-${t.id}"></div></div>`).join('')||'<p class="mut">Здесь пока пусто.</p>';
- if(l.length>lim)el.innerHTML+='<button data-a="more">Показать ещё</button>';hydrate();typeset()}
+ el.innerHTML=l.slice(0,lim).map(t=>{const p1=part(t.n)==1,v=BV[t.id]||'';return `<div class="card ${BS[t.id]==1?'okc':BS[t.id]==2?'badc':''}">${dtb()}<div class="bar"><span class="mut"><b>№${t.n}</b> · ${esc(t.topic||T[t.n-1])}${t.code?' · '+esc(t.code):''}</span>${TUT?`<span class="row" style="flex:0 0 auto;margin:0"><button data-a="edit" data-v="${t.id}">Изменить</button><button data-a="delt" data-v="${t.id}">Удалить</button></span>`:''}</div><div class="txt">${fmt(t.text)}</div>${timg(t)}${p1?`<div class="row"><input id="ba-${t.id}" value="${esc(v)}" placeholder="Ответ" inputmode="decimal" style="max-width:240px"><button class="btn" data-a="bchk" data-v="${t.id}" style="flex:0 0 auto" ${v.trim()?'':'disabled'}>Проверить</button></div>`:`<div class="row"><button class="btn" data-a="bchk" data-v="${t.id}" style="flex:0 0 auto">Показать решение</button></div>`}<div id="br-${t.id}">${BR[t.id]||''}</div></div>`}).join('')||'<p class="mut">Здесь пока пусто.</p>';
+ if(l.length>lim)el.innerHTML+='<button data-a="more">Показать ещё</button>';hydrate();typeset();if(window.dupd)dupd()}
 
 try{const st=localStorage.getItem('ege27theme');if(st)document.documentElement.dataset.theme=st}catch(e){}
 /* ===== Картинки: хранятся в IndexedDB браузера, в задаче — только id ===== */
@@ -175,7 +185,7 @@ document.addEventListener('paste',e=>{if(V!='bank')return;const it=[...((e.clipb
 /* ===== Supabase: вход, база, хранилище картинок ===== */
 const SB_URL='https://fmjwwghwlntjuotkdorw.supabase.co',SB_KEY='sb_publishable_2Q92t-Fl6nTD3BsQHxEExA_YgPTrmm9';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-let SH=false,TUT=true,NW=false,MIG=0,LEG=null,ME=null,PN={},tmr=null,SY={bank:{},vars:{},asg:{},sc:{},att:{}};
+let SH=false,TUT=true,NW=false,MIG=0,LEG=null,ME=null,NAME='',PN={},tmr=null,SY={bank:{},vars:{},asg:{},sc:{},att:{}};
 S={bank:[],vars:[],att:[],asg:[],stu:[]};V='login';C={load:1};
 const stat=()=>!SH?'':NW?'Ошибка сохранения: проверьте соединение и права доступа':TUT?'Репетитор':'Ученик';
 const mark=()=>{const e=$('#st');if(e)e.textContent=stat()},E=r=>{if(r.error)throw r.error;return r.data};
@@ -198,21 +208,16 @@ async function pull(){
  S.att=E(await sb.from('attempts').select('*,scores(task_id,score)')).map(r=>{const s={};(r.scores||[]).forEach(x=>s[x.task_id]=x.score);return{id:r.id,vid:r.variant_id,uid:r.student_id,start:Date.parse(r.started_at),end:r.finished_at?Date.parse(r.finished_at):0,done:r.done,answers:r.answers||{},self:s,chk:{},i:0}});
  if(TUT){S.asg=E(await sb.from('assignments').select('*')).map(r=>({vid:r.variant_id,sid:r.student_id}));S.stu=E(await sb.from('profiles').select('id,name,role'));S.stu.forEach(p=>PN[p.id]=p.name)}
  SY={bank:{},vars:{},asg:{},sc:{},att:{}};S.bank.forEach(x=>SY.bank[x.id]=JSON.stringify(x));S.vars.forEach(x=>SY.vars[x.id]=JSON.stringify(x));S.asg.forEach(x=>SY.asg[x.vid+'|'+x.sid]=1);S.att.forEach(a=>{SY.sc[a.id]=JSON.stringify(a.self);SY.att[a.id]=JSON.stringify(a.answers)})}
-async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');SH=true;await pull();go('home')}
+async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role,name').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');NAME=((p[0]&&p[0].name)||'').split('@')[0];SH=true;await pull();go('home')}
 (async()=>{try{if(E(await sb.auth.getSession()).session)await boot();else go('login')}catch(e){go('login')}})();
-/* ===== Рисование поверх экрана: линии привязаны к странице и прокручиваются вместе с ней ===== */
+/* ===== Рисование: панель в каждом задании; линии привязаны к странице и прокручиваются с ней ===== */
 (function(){
-const IC={pen:'<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',er:'<path d="M3 15l9-9a2 2 0 013 0l4 4a2 2 0 010 3l-6 6H8z"/><path d="M9 21h11"/>',tr:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
-const svg=k=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
-const cv=document.createElement('canvas'),ctx=cv.getContext('2d');cv.id='dr';cv.hidden=true;
-const tb=document.createElement('div');tb.id='dt';tb.className='noprint';tb.hidden=true;
-tb.innerHTML=`<button data-t="pen" class="on" title="Ручка" aria-label="Ручка">${svg('pen')}</button><button data-t="er" title="Ластик: стирает линию целиком" aria-label="Ластик">${svg('er')}</button><span class="sw"><i data-c="b" title="Чёрный"></i><i data-c="u" title="Синий"></i><i data-c="r" title="Красный"></i></span><button data-t="clr" title="Очистить всё" aria-label="Очистить всё">${svg('tr')}</button><button data-t="x" title="Закрыть" aria-label="Закрыть">${svg('x')}</button>`;
-const fb=document.createElement('button');fb.id='df';fb.className='noprint';fb.title='Рисовать на экране';fb.setAttribute('aria-label','Рисовать на экране');fb.innerHTML=svg('pen');
-document.body.append(cv,tb,fb);
-let tool='pen',col='b',strokes=[],cur=null,dpr=1,lm=null,rq=0;const tp=new Map();
+const IC={cur:'<path d="M5 3l14 8-6 2-2 6z"/>',pen:'<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',er:'<path d="M3 15l9-9a2 2 0 013 0l4 4a2 2 0 010 3l-6 6H8z"/><path d="M9 21h11"/>',tr:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
+const svg=k=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+const cv=document.createElement('canvas'),ctx=cv.getContext('2d');cv.id='dr';cv.hidden=true;document.body.append(cv);
+let tool='cur',col='b',strokes=[],cur=null,dpr=1,lm=null,rq=0;const tp=new Map();
 const okV=()=>V=='solve'||V=='bank'||V=='one';
 const P=()=>{const d=theme()=='dark';return{b:d?'#f2f2f2':'#000',u:d?'#6ea2ff':'#1d4fd8',r:d?'#ff7070':'#d62828'}};
-const sw=()=>{const p=P();tb.querySelectorAll('i').forEach(i=>{i.style.background=p[i.dataset.c];i.classList.toggle('on',i.dataset.c==col)})};
 const pg=e=>[e.clientX+scrollX,e.clientY+scrollY];
 const mid=()=>{const a=[...tp.values()];return[a.reduce((s,q)=>s+q[0],0)/a.length,a.reduce((s,q)=>s+q[1],0)/a.length]};
 function tf(){ctx.setTransform(dpr,0,0,dpr,-scrollX*dpr,-scrollY*dpr);ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=3}
@@ -221,9 +226,9 @@ function redraw(){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.he
 function seg(c,a,b){tf();ctx.strokeStyle=P()[c];ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}
 function dseg(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;let t=l?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy)}
 function erase(p){const n=strokes.length;strokes=strokes.filter(s=>{for(let i=0;i<s.pts.length;i++){if(Math.hypot(p[0]-s.pts[i][0],p[1]-s.pts[i][1])<12)return false;if(i&&dseg(p,s.pts[i-1],s.pts[i])<12)return false}return true});if(strokes.length!=n)redraw()}
-function set(t){tool=t;tb.querySelectorAll('[data-t]').forEach(b=>{if(b.dataset.t=='pen'||b.dataset.t=='er')b.classList.toggle('on',b.dataset.t==t)});cv.style.cursor=t=='er'?'cell':'crosshair'}
-function open(){size();cv.hidden=false;tb.hidden=false;fb.hidden=true;sw();set('pen')}
-function close(){cv.hidden=true;tb.hidden=true;fb.hidden=!okV();strokes=[];cur=null;tp.clear();redraw()}
+function apply(){cv.style.pointerEvents=(tool=='pen'||tool=='er')?'auto':'none';cv.style.cursor=tool=='er'?'cell':'crosshair'}
+function upd(){const p=P();document.querySelectorAll('.dtb').forEach(d=>{d.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==tool));d.querySelectorAll('i').forEach(i=>{i.style.background=p[i.dataset.c];i.classList.toggle('on',i.dataset.c==col&&tool=='pen')})})}
+window.dtb=()=>`<div class="dtb noprint"><button data-t="cur" title="Обычный режим: можно вводить ответ" aria-label="Обычный режим">${svg('cur')}</button><button data-t="pen" title="Ручка" aria-label="Ручка">${svg('pen')}</button><button data-t="er" title="Ластик: стирает линию целиком" aria-label="Ластик">${svg('er')}</button><span class="sw"><i data-c="b" title="Чёрный"></i><i data-c="u" title="Синий"></i><i data-c="r" title="Красный"></i></span><button data-t="clr" title="Очистить всё" aria-label="Очистить всё">${svg('tr')}</button></div>`;
 cv.addEventListener('pointerdown',e=>{
  if(e.pointerType=='touch'){tp.set(e.pointerId,[e.clientX,e.clientY]);if(tp.size>1){if(cur&&cur.pts&&cur.pts.length<8){strokes.pop();redraw()}cur=null;lm=mid();return}}
  e.preventDefault();const p=pg(e);
@@ -235,19 +240,22 @@ cv.addEventListener('pointermove',e=>{
  const q=cur.pts[cur.pts.length-1];if(Math.hypot(p[0]-q[0],p[1]-q[1])<1.5)return;cur.pts.push(p);seg(cur.c,q,p)});
 const up=e=>{tp.delete(e.pointerId);if(tp.size<2)lm=null;cur=null};
 ['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,up));
-tb.addEventListener('click',e=>{const i=e.target.closest('[data-c]'),b=e.target.closest('[data-t]');if(i){col=i.dataset.c;if(tool!='pen')set('pen');sw()}else if(b){const t=b.dataset.t;if(t=='clr'){strokes=[];redraw()}else if(t=='x')close();else set(t)}});
-fb.addEventListener('click',open);
+document.addEventListener('click',e=>{const i=e.target.closest('.dtb [data-c]'),b=e.target.closest('.dtb [data-t]');if(i){col=i.dataset.c;tool='pen'}else if(b){const t=b.dataset.t;if(t=='clr'){strokes=[];redraw();return}tool=t}else return;apply();upd()});
 addEventListener('resize',()=>{if(!cv.hidden)size()});
 addEventListener('scroll',()=>{if(!cv.hidden&&!rq)rq=requestAnimationFrame(()=>{rq=0;redraw()})},{passive:true});
-addEventListener('keydown',e=>{if(e.key=='Escape'&&!cv.hidden)close()});
-window.dsw=()=>{sw();redraw()};window.dclr=()=>{strokes=[];redraw()};window.dfb=()=>{const ok=okV();if(!ok&&!cv.hidden)close();fb.hidden=!ok||!cv.hidden};
+addEventListener('keydown',e=>{if(e.key=='Escape'&&tool!='cur'){tool='cur';apply();upd()}});
+window.dupd=upd;window.dsw=()=>{redraw();upd()};window.dclr=()=>{strokes=[];redraw()};
+window.dfb=()=>{const ok=okV();cv.hidden=!ok;if(ok){const d=window.devicePixelRatio||1;if(cv.width!=Math.round(innerWidth*d)||cv.height!=Math.round(innerHeight*d))size();else redraw()}else{strokes=[];tool='cur';apply()}upd()};
 })();
 const theme=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 const A={
 theme:()=>{const t=theme()=='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('ege27theme',t)}catch(e){}render();if(window.dsw)dsw()},
 login:async()=>{const r=await sb.auth.signInWithPassword({email:$('#lm').value.trim(),password:$('#lp').value});if(r.error){C.msg='Неверная почта или пароль.';return render()}try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}},
 reg:async()=>{if(!$('#ln').value.trim()){C.msg='Введите имя.';return render()}const r=await sb.auth.signUp({email:$('#lm').value.trim(),password:$('#lp').value,options:{data:{name:$('#ln').value.trim()}}});if(r.error){C.msg=r.error.message;return render()}if(r.data.session){try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}}else{C.msg='Проверьте почту, подтвердите регистрацию и войдите.';C.reg=0;render()}},
-out:async()=>{await sb.auth.signOut();location.reload()},
+out:()=>{if($('#md'))return;const d=document.createElement('div');d.id='md';d.className='noprint';d.innerHTML='<div class="mb" role="dialog" aria-modal="true"><p>Вы точно хотите выйти?</p><div class="row"><button class="btn" data-a="outyes">Да, выйти</button><button data-a="outno">Остаться</button></div></div>';d.onclick=e=>{if(e.target==d)d.remove()};document.body.append(d)},
+outno:()=>{const d=$('#md');if(d)d.remove()},
+outyes:async()=>{await sb.auth.signOut();location.reload()},
+shans:id=>{const t=S.bank.find(x=>x.id==id),o=$('#br-'+id);BR[id]='<p class="bad">Неверно</p><p>Правильный ответ: '+esc(t.answer)+'</p>';o.innerHTML=BR[id]},
 asgv:async v=>{try{await pull()}catch(e){}go('asg',{vid:v})},
 tg:id=>{const k=S.asg.findIndex(x=>x.vid==C.vid&&x.sid==id);if(k>=0)S.asg.splice(k,1);else S.asg.push({vid:C.vid,sid:id});save()},
 lmode:v=>go('login',{reg:v?1:0}),
@@ -257,10 +265,13 @@ chkone:async()=>{const t=S.bank.find(x=>x.id==C.tid),v=$('#oa').value;C.val=v;C.
  else C.res=part(t.n)==1?(norm(v)!==''&&norm(v)==norm(t.answer)?1:2):3;render()},
 onenx:v=>{if(window.dclr)dclr();const l=S.bank.slice().sort((a,b)=>a.n-b.n),k=l.findIndex(x=>x.id==C.tid)+ +v;if(l[k])go('one',{tid:l[k].id})},
 more:()=>{C.lim=(C.lim||20)+20;fillList()},
-bchk:async id=>{const t=S.bank.find(x=>x.id==id),el=$('#ba-'+id),v=el?el.value:'',o=$('#br-'+id);let res;
- try{if(TUT)res=part(t.n)==1?(norm(v)!==''&&norm(v)==norm(t.answer)?1:2):3;else{const r=E(await sb.rpc('check_task',{p_task:id,p_answer:v}));t.answer=r.answer||'';t.solution=r.solution||'';res=part(t.n)==1?(r.correct?1:2):3}}
- catch(e){o.innerHTML='<p class="bad">Не удалось проверить: '+esc(e.message||e)+'</p>';return}
- o.innerHTML=res==1?'<p class="good">Верно. Ответ: '+esc(t.answer)+'</p>':res==2?'<p class="bad">Неверно. Правильный ответ: '+esc(t.answer)+'</p>':(t.solution?'<div class="pv">'+fmt(t.solution)+'</div>':'<p class="mut">Решение не добавлено.</p>');typeset()},
+bchk:async id=>{const t=S.bank.find(x=>x.id==id),el=$('#ba-'+id),v=el?el.value:'',o=$('#br-'+id),b=document.querySelector('[data-a="bchk"][data-v="'+id+'"]'),lab=b.textContent,p1=part(t.n)==1,box=b.closest('.card');
+ b.disabled=true;b.textContent='Проверяем…';let res;
+ try{if(TUT)res=p1?(norm(v)!==''&&norm(v)==norm(t.answer)?1:2):3;else{const r=E(await sb.rpc('check_task',{p_task:id,p_answer:v}));t.answer=r.answer||'';t.solution=r.solution||'';res=p1?(r.correct?1:2):3}}
+ catch(e){o.innerHTML='<p class="bad">Не удалось проверить: '+esc(e.message||e)+'</p>';b.textContent=lab;b.disabled=p1&&!v.trim();return}
+ b.textContent=lab;b.disabled=p1&&!v.trim();box.classList.remove('okc','badc');BS[id]=res;if(res==1)box.classList.add('okc');if(res==2)box.classList.add('badc');
+ BR[id]=res==1?'<p class="good">Верно</p>':res==2?'<p class="bad">Неверно</p><button class="lnk" data-a="shans" data-v="'+id+'">Показать ответ</button>':(t.solution?'<div class="pv">'+fmt(t.solution)+'</div>':'<p class="mut">Решение не добавлено.</p>');
+ o.innerHTML=BR[id];typeset()},
 open:id=>go('result',{aid:id}),
 migr:async()=>{MIG=1;for(const t of LEG.bank){if(S.bank.some(x=>x.id==t.id))continue;const n=Object.assign({},t);if(t.img&&t.img.indexOf('a:')!==0&&AS){try{const b=await iget(t.img);if(b){const r=await AS.upload(b);n.img='a:'+r.id}}catch(e){}}S.bank.push(n)}save();go('bank',{msg:'Задания перенесены в общий банк.'})},
 rmimg:()=>{if(C.img&&C.img!=C.orig)idel(C.img);C.img=null;$('#imgbox').innerHTML=''},
@@ -293,7 +304,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&
 document.addEventListener('input',e=>{const t=e.target,f=t.dataset.f;
  if(f=='ans'){att().answers[t.dataset.t]=t.value;save();const c=document.querySelector('.chip.on');if(c)c.classList.toggle('dn',!!norm(t.value))}
  else if(f=='self'){att().self[t.dataset.t]=Math.max(0,Math.min(+t.dataset.m,+t.value||0));save();$('#tot').textContent=score(att()).total}
- else if(t.id=='fx'){$('#pv').innerHTML=fmt(t.value);typeset()}else if(t.id=='fq')fillList()});
+ else if(t.id&&t.id.indexOf('ba-')==0){const id=t.id.slice(3),b=document.querySelector('[data-a="bchk"][data-v="'+id+'"]');BV[id]=t.value;if(b)b.disabled=!t.value.trim()}else if(t.id=='fx'){$('#pv').innerHTML=fmt(t.value);typeset()}else if(t.id=='fq')fillList()});
 document.addEventListener('change',e=>{const t=e.target;
  if(t.id=='fimg'){pick(t.files[0]);t.value=''}else if(t.id=='fn'){$('#ft').value=T[t.value-1];$('#la').hidden=+t.value>CFG.part1Last}
  else if(t.id=='flt')fillList();else if(t.name=='mode'){$('#man').hidden=t.value!='manual';$('#aut').hidden=t.value=='manual'}});

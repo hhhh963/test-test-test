@@ -92,6 +92,20 @@ label{font-weight:500}
 table{font-size:.96rem}th{color:var(--mut);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
 details.card summary{cursor:pointer;font-weight:500}
 @media (max-width:560px){main{padding-left:14px;padding-right:14px}header{padding-left:14px;padding-right:14px}h1{font-size:1.7rem}.card{padding:18px;border-radius:20px}}
+/* ===== Боковая панель ===== */
+body{padding-left:76px;transition:padding-left .25s cubic-bezier(.4,0,.2,1)}body.sbo{padding-left:248px}body.lg{padding-left:0}
+#sb{position:fixed;left:0;top:0;bottom:0;width:76px;z-index:70;background:var(--card);border-right:1px solid var(--line);padding:calc(14px + env(safe-area-inset-top,0px)) 12px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;overflow:hidden;transition:width .25s cubic-bezier(.4,0,.2,1),transform .25s cubic-bezier(.4,0,.2,1)}
+#sb.open{width:248px}
+.sbi{display:flex;align-items:center;gap:14px;width:100%;height:46px;min-height:46px;padding:0 13px;border:0;background:none;border-radius:13px;color:var(--mut);white-space:nowrap;font-weight:500;text-align:left;box-shadow:none}
+.sbi svg{flex:0 0 22px}.sbi:hover{background:var(--accs);color:var(--ink)}.sbi.on,.sbi.on:hover{background:var(--g);color:var(--on)}
+.sbi .lb{opacity:0;transition:opacity .15s}#sb.open .lb{opacity:1}
+.sbt{margin-bottom:10px}.sbf{margin-top:auto;display:flex;flex-direction:column;gap:6px}
+.hb{display:none}#sbm{display:none}
+@media (max-width:700px){body,body.sbo{padding-left:0}
+#sb{width:248px;transform:translateX(-100%)}#sb.open{transform:none;box-shadow:0 0 60px rgba(0,0,0,.35)}#sb .lb{opacity:1}
+#sbm.open{display:block;position:fixed;inset:0;z-index:65;background:rgba(10,20,40,.4)}
+.hb{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:13px}
+header{justify-content:flex-start;gap:12px}}
 </style></head><body><div id="app"></div>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -118,11 +132,14 @@ const hm=m=>Math.floor(m/60)+' ч '+(m%60)+' мин';
 const fT=r=>{const h=Math.floor(r/3600),m=Math.floor(r%3600/60),s=r%60;return h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
 const nOpts=(sel,all)=>(all?'<option value="0">Все номера</option>':'')+T.map((x,i)=>`<option value="${i+1}" ${sel==i+1?'selected':''}>${i+1} · ${esc(x)}</option>`).join('');
 
-function go(v,c){if(!TUT&&!['home','solve','result','bank','build','one'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
-function render(){clearInterval(tm);if(V=='login'){$('#app').innerHTML='<main>'+VIEWS.login()+'</main>';if(window.dfb)dfb();return}
- const tabs=[['home','Главная'],['bank','Банк заданий'],['build','Конструктор']].concat(SH&&TUT?[['res','Ученики']]:[]);
- $('#app').innerHTML=`<header class="noprint"><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span><nav>${tabs.map(([k,l])=>`<button class="tab ${V==k?'on':''}" data-a="go" data-v="${k}">${l}</button>`).join('')}<button class="tab" data-a="theme">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</button>${SH?'<button class="tab" data-a="out">Выйти</button>':''}</nav></header><main>${VIEWS[V]()}</main>`;
- if(V=='solve'){tick();tm=setInterval(tick,1000)}
+let SBO=(()=>{try{const v=localStorage.getItem('ege27sb');if(v!==null)return v=='1'}catch(e){}return innerWidth>700})();
+const IC2={menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',book:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19a2 2 0 012-2h13"/>',build:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6M16 5a3 3 0 010 6M18 14c2 .6 3 2.4 3 5"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',moon:'<path d="M20 14A8 8 0 019.5 4 8 8 0 1020 14z"/>',out:'<path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9"/>'};
+const ic=k=>`<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${IC2[k]}</svg>`;
+function go(v,c){if(innerWidth<=700)SBO=false;if(!TUT&&!['home','solve','result','bank','build','one'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
+function render(){clearInterval(tm);if(V=='login'){document.body.classList.add('lg');$('#app').innerHTML='<main>'+VIEWS.login()+'</main>';if(window.dfb)dfb();return}
+ const tabs=[['home','Главная','home'],['bank','Банк заданий','book'],['build','Конструктор','build']].concat(SH&&TUT?[['res','Ученики','users']]:[]);
+ $('#app').innerHTML=`<aside id="sb" class="noprint ${SBO?'open':''}"><button class="sbi sbt" data-a="sbt" title="Свернуть или развернуть меню" aria-label="Меню">${ic('menu')}<span class="lb">Меню</span></button>${tabs.map(([k,l,i])=>`<button class="sbi ${V==k?'on':''}" data-a="go" data-v="${k}" title="${l}">${ic(i)}<span class="lb">${l}</span></button>`).join('')}<div class="sbf"><button class="sbi" data-a="theme" title="Сменить тему">${ic(theme()=='dark'?'sun':'moon')}<span class="lb">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</span></button>${SH?`<button class="sbi" data-a="out" title="Выйти">${ic('out')}<span class="lb">Выйти</span></button>`:''}</div></aside><div id="sbm" class="noprint ${SBO?'open':''}" data-a="sbt"></div><header class="noprint"><button class="hb" data-a="sbt" aria-label="Меню">${ic('menu')}</button><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span></header><main>${VIEWS[V]()}</main>`;
+ document.body.classList.toggle('sbo',SBO);document.body.classList.remove('lg');if(V=='solve'){tick();tm=setInterval(tick,1000)}
  if(V=='bank')fillList();hydrate();if(window.dfb)dfb();
  typeset()}
 function tick(){const a=att();if(!a)return;const v=S.vars.find(x=>x.id==a.vid),el=$('#tm');if(!el||!v.limit)return;
@@ -259,7 +276,8 @@ function redraw(){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.he
 function seg(c,a,b){tf();ctx.strokeStyle=P()[c];ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}
 function dseg(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;let t=l?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy)}
 function erase(p){const n=strokes.length;strokes=strokes.filter(s=>{for(let i=0;i<s.pts.length;i++){if(Math.hypot(p[0]-s.pts[i][0],p[1]-s.pts[i][1])<12)return false;if(i&&dseg(p,s.pts[i-1],s.pts[i])<12)return false}return true});if(strokes.length!=n)redraw()}
-function apply(){cv.style.pointerEvents=(tool=='pen'||tool=='er')?'auto':'none';cv.style.cursor=tool=='er'?'cell':'crosshair'}
+function curs(){const pen=tool=='pen',c=P()[col],g=pen?`<path d="M3 21l1.3-4.8L16.4 4.1a2.1 2.1 0 013 0l.5.5a2.1 2.1 0 010 3L7.8 19.7z" fill="${c}" stroke="#111b33" stroke-width="1.4" stroke-linejoin="round"/><path d="M3 21l1.3-4.8 3.5 3.5z" fill="#f2c27b" stroke="#111b33" stroke-width="1.2" stroke-linejoin="round"/>`:`<path d="M4 15l8-8a2.1 2.1 0 013 0l4 4a2.1 2.1 0 010 3l-5 5H8z" fill="#ff9db5" stroke="#111b33" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 11l5 5" stroke="#111b33" stroke-width="1.2"/>`,v=`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">${g}</svg>`;return `url("data:image/svg+xml,${encodeURIComponent(v)}") ${pen?'3 24':'14 18'}, crosshair`}
+function apply(){cv.style.pointerEvents=(tool=='pen'||tool=='er')?'auto':'none';cv.style.cursor=(tool=='pen'||tool=='er')?curs():'default'}
 function upd(){const p=P();document.querySelectorAll('.dtb').forEach(d=>{d.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==tool));d.querySelectorAll('i').forEach(i=>{i.style.background=p[i.dataset.c];i.classList.toggle('on',i.dataset.c==col&&tool=='pen')})})}
 window.dtb=()=>`<div class="dtb noprint"><button data-t="cur" title="Обычный режим: можно вводить ответ" aria-label="Обычный режим">${svg('cur')}</button><button data-t="pen" title="Ручка" aria-label="Ручка">${svg('pen')}</button><button data-t="er" title="Ластик: стирает линию целиком" aria-label="Ластик">${svg('er')}</button><span class="sw"><i data-c="b" title="Чёрный"></i><i data-c="u" title="Синий"></i><i data-c="r" title="Красный"></i></span><button data-t="clr" title="Очистить всё" aria-label="Очистить всё">${svg('tr')}</button></div>`;
 cv.addEventListener('pointerdown',e=>{
@@ -277,7 +295,7 @@ document.addEventListener('click',e=>{const i=e.target.closest('.dtb [data-c]'),
 addEventListener('resize',()=>{if(!cv.hidden)size()});
 addEventListener('scroll',()=>{if(!cv.hidden&&!rq)rq=requestAnimationFrame(()=>{rq=0;redraw()})},{passive:true});
 addEventListener('keydown',e=>{if(e.key=='Escape'&&tool!='cur'){tool='cur';apply();upd()}});
-window.dupd=upd;window.dsw=()=>{redraw();upd()};window.dclr=()=>{strokes=[];redraw()};
+window.dupd=upd;window.dsw=()=>{redraw();apply();upd()};window.dclr=()=>{strokes=[];redraw()};
 window.dfb=()=>{const ok=okV();cv.hidden=!ok;if(ok){const d=window.devicePixelRatio||1;if(cv.width!=Math.round(innerWidth*d)||cv.height!=Math.round(innerHeight*d))size();else redraw()}else{strokes=[];tool='cur';apply()}upd()};
 })();
 const theme=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
@@ -286,6 +304,7 @@ theme:()=>{const t=theme()=='dark'?'light':'dark';document.documentElement.datas
 login:async()=>{const r=await sb.auth.signInWithPassword({email:$('#lm').value.trim(),password:$('#lp').value});if(r.error){C.msg='Неверная почта или пароль.';return render()}try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}},
 reg:async()=>{if(!$('#ln').value.trim()){C.msg='Введите имя.';return render()}const r=await sb.auth.signUp({email:$('#lm').value.trim(),password:$('#lp').value,options:{data:{name:$('#ln').value.trim()}}});if(r.error){C.msg=r.error.message;return render()}if(r.data.session){try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}}else{C.msg='Проверьте почту, подтвердите регистрацию и войдите.';C.reg=0;render()}},
 out:()=>{if($('#md'))return;const d=document.createElement('div');d.id='md';d.className='noprint';d.innerHTML='<div class="mb" role="dialog" aria-modal="true"><p>Вы точно хотите выйти?</p><div class="row"><button class="btn" data-a="outyes">Да, выйти</button><button data-a="outno">Остаться</button></div></div>';d.onclick=e=>{if(e.target==d)d.remove()};document.body.append(d)},
+sbt:()=>{SBO=!SBO;try{localStorage.setItem('ege27sb',SBO?'1':'0')}catch(e){}const a=$('#sb'),m=$('#sbm');if(a)a.classList.toggle('open',SBO);if(m)m.classList.toggle('open',SBO);document.body.classList.toggle('sbo',SBO)},
 outno:()=>{const d=$('#md');if(d)d.remove()},
 outyes:async()=>{await sb.auth.signOut();location.reload()},
 shans:id=>{const t=S.bank.find(x=>x.id==id),o=$('#br-'+id);BR[id]='<p class="bad">Неверно</p><p>Правильный ответ: '+esc(t.answer)+'</p>';o.innerHTML=BR[id]},

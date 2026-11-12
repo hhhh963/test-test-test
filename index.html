@@ -106,6 +106,9 @@ body{padding-left:76px;transition:padding-left .25s cubic-bezier(.4,0,.2,1)}body
 #sbm.open{display:block;position:fixed;inset:0;z-index:65;background:rgba(10,20,40,.4)}
 .hb{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:13px}
 header{justify-content:flex-start;gap:12px}}
+.dtb button{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;min-height:40px;padding:0}.dtb button svg{display:block}
+.dtb{gap:4px;padding:5px}.dtb .sw{align-items:center;padding:0 6px}
+.dtb:not(.act) .dx{display:none}
 </style></head><body><div id="app"></div>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -169,7 +172,7 @@ bank(){if(!TUT)return `<h1>Банк заданий</h1><p class="mut">Выбер
 build(){const cnt=n=>S.bank.filter(t=>t.n==n).length;
  return `<h1>Конструктор вариантов</h1>${C.msg?`<p class="bad">${esc(C.msg)}</p>`:''}
  <div class="card"><div class="row"><label>Название<input id="bn" placeholder="Вариант ${S.vars.length+1}"></label>
- <label>Время<select id="bl"><option value="${CFG.time}">Как на ЕГЭ: ${hm(CFG.time)}</option><option value="0">Без ограничения времени</option></select></label><input id="bs" type="hidden" value="${Math.floor(Math.random()*99999)}"></div>
+ <label>Время<select id="bl"><option value="${CFG.time}">${hm(CFG.time)}</option><option value="0">∞</option></select></label><input id="bs" type="hidden" value="${Math.floor(Math.random()*99999)}"></div>
  
  </div>
  <div class="card" id="aut"><b>Сколько задач на каждый номер</b><div class="grid" style="margin-top:8px">${T.map((x,i)=>`<label class="cn"><input type="number" min="0" max="5" data-n="${i+1}" value="${cnt(i+1)?1:0}"><span>${i+1}. ${esc(x)} <span class="mut">(в банке: ${cnt(i+1)})</span></span></label>`).join('')}</div></div>
@@ -192,7 +195,7 @@ result(){const a=att(),v=S.vars.find(x=>x.id==a.vid),ts=vt(v),s=score(a),mx=ts.r
  `<tr><td>${t.n}</td><td>${fmt(a.answers[t.id])||'—'}${t.solution?`<details><summary class="mut">Эталон и критерии</summary>${fmt(t.solution)}</details>`:''}</td><td><input type="number" min="0" max="${M[t.n-1]}" data-f="self" data-t="${t.id}" data-m="${M[t.n-1]}" value="${a.self[t.id]||0}" style="width:70px"> из ${M[t.n-1]}</td></tr>`).join('')}</table></div>
  <button class="btn" data-a="go" data-v="home">На главную</button>`},
 
-login(){if(C.load)return'<p class="mut">Загрузка…</p>';const r=C.reg;return `<h1>ЕГЭ 2027</h1><p class="mut">${r?'Создайте аккаунт ученика.':'Войдите, чтобы продолжить.'} ${C.msg?`<span class="bad">${esc(C.msg)}</span>`:''}</p><div class="card">${r?'<label>Имя<input id="ln" autocomplete="name"></label>':''}<label>Почта<input id="lm" type="email" autocomplete="username"></label><label>Пароль<input id="lp" type="password" autocomplete="${r?'new-password':'current-password'}"></label><div class="row" style="margin-top:14px"><button class="btn" data-a="${r?'reg':'login'}">${r?'Зарегистрироваться':'Войти'}</button></div><p class="mut" style="margin:14px 0 0">${r?'Уже есть аккаунт?':'Нет аккаунта?'} <button class="lnk" data-a="lmode" data-v="${r?'':'1'}">${r?'Войти':'Зарегистрироваться'}</button></p></div>`},
+login(){if(C.load)return'<p class="mut">Загрузка…</p>';const r=C.reg;return `<h1>ЕГЭ 2027</h1><p class="mut">${r?'Создайте аккаунт.':'Войдите, чтобы продолжить.'} <span class="bad" id="lmsg">${C.msg?esc(C.msg):''}</span></p><div class="card">${r?'<label>Имя<input id="ln" autocomplete="name"></label>':''}<label>Почта<input id="lm" type="email" autocomplete="username"></label><label>Пароль<input id="lp" type="password" autocomplete="${r?'new-password':'current-password'}"></label><div class="row" style="margin-top:14px"><button class="btn" data-a="${r?'reg':'login'}">${r?'Зарегистрироваться':'Войти'}</button></div><p class="mut" style="margin:14px 0 0">${r?'Уже есть аккаунт?':'Нет аккаунта?'} <button class="lnk" data-a="lmode" data-v="${r?'':'1'}">${r?'Войти':'Зарегистрироваться'}</button></p></div>`},
 one(){const t=S.bank.find(x=>x.id==C.tid);if(!t)return'<p>Задание не найдено.</p>';const p1=part(t.n)==1,r=C.res;
  return `<div class="bar"><button data-a="go" data-v="bank">← К банку заданий</button><span class="mut">№${t.n} · ${esc(t.topic||T[t.n-1])} · ${M[t.n-1]} б.${t.code?' · '+esc(t.code):''}</span></div>
  <div class="card"><div class="txt">${fmt(t.text)}</div>${timg(t)}
@@ -237,7 +240,7 @@ const SB_URL='https://fmjwwghwlntjuotkdorw.supabase.co',SB_KEY='sb_publishable_2
 const sb=supabase.createClient(SB_URL,SB_KEY);
 let SH=false,TUT=true,NW=false,MIG=0,LEG=null,ME=null,NAME='',PN={},tmr=null,SY={bank:{},vars:{},asg:{},sc:{},att:{}};
 S={bank:[],vars:[],att:[],asg:[],stu:[]};V='login';C={load:1};
-const stat=()=>!SH?'':NW?'Ошибка сохранения: проверьте соединение и права доступа':TUT?'Репетитор':'Ученик';
+const stat=()=>!SH?'':NW?'Ошибка сохранения: проверьте соединение и права доступа':'';
 const mark=()=>{const e=$('#st');if(e)e.textContent=stat()},E=r=>{if(r.error)throw r.error;return r.data};
 function sync(){if(!SH)return;clearTimeout(tmr);tmr=setTimeout(()=>doSync().catch(e=>{console.error(e);NW=true;mark()}),400)}
 async function doSync(){
@@ -262,7 +265,7 @@ async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(
 (async()=>{try{if(E(await sb.auth.getSession()).session)await boot();else go('login')}catch(e){go('login')}})();
 /* ===== Рисование: панель в каждом задании; линии привязаны к странице и прокручиваются с ней ===== */
 (function(){
-const IC={cur:'<path d="M5 3l14 8-6 2-2 6z"/>',pen:'<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',er:'<path d="M3 15l9-9a2 2 0 013 0l4 4a2 2 0 010 3l-6 6H8z"/><path d="M9 21h11"/>',tr:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
+const IC={cur:'<path d="M5 3l14 8-6 2-2 6z"/>',pen:'<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',er:'<path d="M3 15l9-9a2 2 0 013 0l4 4a2 2 0 010 3l-6 6H8z"/><path d="M9 21h11"/>',tr:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
 const svg=k=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
 const cv=document.createElement('canvas'),ctx=cv.getContext('2d');cv.id='dr';cv.hidden=true;document.body.append(cv);
 let tool='cur',col='b',strokes=[],cur=null,dpr=1,lm=null,rq=0;const tp=new Map();
@@ -278,8 +281,8 @@ function dseg(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;let t=l?((p[0
 function erase(p){const n=strokes.length;strokes=strokes.filter(s=>{for(let i=0;i<s.pts.length;i++){if(Math.hypot(p[0]-s.pts[i][0],p[1]-s.pts[i][1])<12)return false;if(i&&dseg(p,s.pts[i-1],s.pts[i])<12)return false}return true});if(strokes.length!=n)redraw()}
 function curs(){const pen=tool=='pen',c=P()[col],g=pen?`<path d="M3 21l1.3-4.8L16.4 4.1a2.1 2.1 0 013 0l.5.5a2.1 2.1 0 010 3L7.8 19.7z" fill="${c}" stroke="#111b33" stroke-width="1.4" stroke-linejoin="round"/><path d="M3 21l1.3-4.8 3.5 3.5z" fill="#f2c27b" stroke="#111b33" stroke-width="1.2" stroke-linejoin="round"/>`:`<path d="M4 15l8-8a2.1 2.1 0 013 0l4 4a2.1 2.1 0 010 3l-5 5H8z" fill="#ff9db5" stroke="#111b33" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 11l5 5" stroke="#111b33" stroke-width="1.2"/>`,v=`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">${g}</svg>`;return `url("data:image/svg+xml,${encodeURIComponent(v)}") ${pen?'3 24':'14 18'}, crosshair`}
 function apply(){cv.style.pointerEvents=(tool=='pen'||tool=='er')?'auto':'none';cv.style.cursor=(tool=='pen'||tool=='er')?curs():'default'}
-function upd(){const p=P();document.querySelectorAll('.dtb').forEach(d=>{d.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==tool));d.querySelectorAll('i').forEach(i=>{i.style.background=p[i.dataset.c];i.classList.toggle('on',i.dataset.c==col&&tool=='pen')})})}
-window.dtb=()=>`<div class="dtb noprint"><button data-t="cur" title="Обычный режим: можно вводить ответ" aria-label="Обычный режим">${svg('cur')}</button><button data-t="pen" title="Ручка" aria-label="Ручка">${svg('pen')}</button><button data-t="er" title="Ластик: стирает линию целиком" aria-label="Ластик">${svg('er')}</button><span class="sw"><i data-c="b" title="Чёрный"></i><i data-c="u" title="Синий"></i><i data-c="r" title="Красный"></i></span><button data-t="clr" title="Очистить всё" aria-label="Очистить всё">${svg('tr')}</button></div>`;
+function upd(){const p=P();document.querySelectorAll('.dtb').forEach(d=>{d.classList.toggle('act',tool!='cur');d.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==tool));d.querySelectorAll('i').forEach(i=>{i.style.background=p[i.dataset.c];i.classList.toggle('on',i.dataset.c==col&&tool=='pen')})})}
+window.dtb=()=>`<div class="dtb noprint"><button data-t="pen" title="Ручка" aria-label="Ручка">${svg('pen')}</button><button data-t="er" title="Ластик: стирает линию целиком" aria-label="Ластик">${svg('er')}</button><span class="sw dx"><i data-c="b" title="Чёрный"></i><i data-c="u" title="Синий"></i><i data-c="r" title="Красный"></i></span><button class="dx" data-t="clr" title="Очистить всё" aria-label="Очистить всё">${svg('tr')}</button><button class="dx" data-t="cur" title="Выйти из рисования" aria-label="Выйти из рисования">${svg('x')}</button></div>`;
 cv.addEventListener('pointerdown',e=>{
  if(e.pointerType=='touch'){tp.set(e.pointerId,[e.clientX,e.clientY]);if(tp.size>1){if(cur&&cur.pts&&cur.pts.length<8){strokes.pop();redraw()}cur=null;lm=mid();return}}
  e.preventDefault();const p=pg(e);
@@ -291,7 +294,7 @@ cv.addEventListener('pointermove',e=>{
  const q=cur.pts[cur.pts.length-1];if(Math.hypot(p[0]-q[0],p[1]-q[1])<1.5)return;cur.pts.push(p);seg(cur.c,q,p)});
 const up=e=>{tp.delete(e.pointerId);if(tp.size<2)lm=null;cur=null};
 ['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,up));
-document.addEventListener('click',e=>{const i=e.target.closest('.dtb [data-c]'),b=e.target.closest('.dtb [data-t]');if(i){col=i.dataset.c;tool='pen'}else if(b){const t=b.dataset.t;if(t=='clr'){strokes=[];redraw();return}tool=t}else return;apply();upd()});
+document.addEventListener('click',e=>{const i=e.target.closest('.dtb [data-c]'),b=e.target.closest('.dtb [data-t]');if(i){col=i.dataset.c;tool='pen'}else if(b){const t=b.dataset.t;if(t=='clr'){strokes=[];redraw();return}tool=(t==tool&&t!='cur')?'cur':t}else return;apply();upd()});
 addEventListener('resize',()=>{if(!cv.hidden)size()});
 addEventListener('scroll',()=>{if(!cv.hidden&&!rq)rq=requestAnimationFrame(()=>{rq=0;redraw()})},{passive:true});
 addEventListener('keydown',e=>{if(e.key=='Escape'&&tool!='cur'){tool='cur';apply();upd()}});
@@ -299,10 +302,30 @@ window.dupd=upd;window.dsw=()=>{redraw();apply();upd()};window.dclr=()=>{strokes
 window.dfb=()=>{const ok=okV();cv.hidden=!ok;if(ok){const d=window.devicePixelRatio||1;if(cv.width!=Math.round(innerWidth*d)||cv.height!=Math.round(innerHeight*d))size();else redraw()}else{strokes=[];tool='cur';apply()}upd()};
 })();
 const theme=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+const lerr=m=>{const e=$('#lmsg');if(e)e.textContent=m},
+EM=/^\S+@\S+\.\S+$/,
+ae=e=>{const m=((e&&e.message)||'').toLowerCase(),c=(e&&e.code)||'';
+ if(c=='user_already_exists'||m.includes('already registered'))return'Этот аккаунт уже зарегистрирован. Войдите или используйте другую почту.';
+ if(c=='invalid_credentials'||m.includes('invalid login'))return'Неверная почта или пароль.';
+ if(c=='weak_password'||m.includes('at least'))return'Пароль слишком короткий: нужно не менее 6 символов.';
+ if(c=='email_not_confirmed'||m.includes('not confirmed'))return'Подтвердите почту: перейдите по ссылке из письма.';
+ if(m.includes('rate limit')||c.includes('rate_limit'))return'Слишком много попыток. Подождите немного и попробуйте снова.';
+ if(m.includes('invalid')&&m.includes('email')||c=='email_address_invalid')return'Введите корректную почту.';
+ if(m.includes('anonymous'))return'Заполните все поля.';
+ if(m.includes('failed to fetch')||m.includes('network'))return'Нет соединения с интернетом.';
+ return'Не удалось выполнить действие. Попробуйте ещё раз.'};
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&['lm','lp','ln'].includes(e.target.id)){const b=document.querySelector('[data-a="login"],[data-a="reg"]');if(b)b.click()}});
 const A={
 theme:()=>{const t=theme()=='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('ege27theme',t)}catch(e){}render();if(window.dsw)dsw()},
-login:async()=>{const r=await sb.auth.signInWithPassword({email:$('#lm').value.trim(),password:$('#lp').value});if(r.error){C.msg='Неверная почта или пароль.';return render()}try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}},
-reg:async()=>{if(!$('#ln').value.trim()){C.msg='Введите имя.';return render()}const r=await sb.auth.signUp({email:$('#lm').value.trim(),password:$('#lp').value,options:{data:{name:$('#ln').value.trim()}}});if(r.error){C.msg=r.error.message;return render()}if(r.data.session){try{await boot()}catch(e){C.msg='Не удалось загрузить данные: '+(e.message||e);render()}}else{C.msg='Проверьте почту, подтвердите регистрацию и войдите.';C.reg=0;render()}},
+login:async()=>{const m=$('#lm').value.trim(),p=$('#lp').value;if(!m)return lerr('Введите почту.');if(!p)return lerr('Введите пароль.');lerr('');
+ const r=await sb.auth.signInWithPassword({email:m,password:p});if(r.error)return lerr(ae(r.error));
+ try{await boot()}catch(e){lerr('Не удалось загрузить данные. Проверьте соединение и попробуйте снова.')}},
+reg:async()=>{const n=$('#ln').value.trim(),m=$('#lm').value.trim(),p=$('#lp').value;
+ if(!n)return lerr('Введите имя.');if(!m)return lerr('Введите почту.');if(!EM.test(m))return lerr('Введите корректную почту.');if(!p)return lerr('Введите пароль.');if(p.length<6)return lerr('Пароль должен содержать не менее 6 символов.');lerr('');
+ const r=await sb.auth.signUp({email:m,password:p,options:{data:{name:n}}});if(r.error)return lerr(ae(r.error));
+ if(r.data.user&&r.data.user.identities&&r.data.user.identities.length==0)return lerr('Этот аккаунт уже зарегистрирован. Войдите или используйте другую почту.');
+ if(r.data.session){try{await boot()}catch(e){lerr('Не удалось загрузить данные. Проверьте соединение и попробуйте снова.')}}
+ else{C.msg='Проверьте почту, подтвердите регистрацию и войдите.';C.reg=0;render()}},
 out:()=>{if($('#md'))return;const d=document.createElement('div');d.id='md';d.className='noprint';d.innerHTML='<div class="mb" role="dialog" aria-modal="true"><p>Вы точно хотите выйти?</p><div class="row"><button class="btn" data-a="outyes">Да, выйти</button><button data-a="outno">Остаться</button></div></div>';d.onclick=e=>{if(e.target==d)d.remove()};document.body.append(d)},
 sbt:()=>{SBO=!SBO;try{localStorage.setItem('ege27sb',SBO?'1':'0')}catch(e){}const a=$('#sb'),m=$('#sbm');if(a)a.classList.toggle('open',SBO);if(m)m.classList.toggle('open',SBO);document.body.classList.toggle('sbo',SBO)},
 outno:()=>{const d=$('#md');if(d)d.remove()},

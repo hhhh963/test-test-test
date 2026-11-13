@@ -139,11 +139,13 @@ table.sc tr.bred td{border-bottom:3px solid #e5383b}table.sc tr.bor td{border-bo
 .st tr.lr td{border-top:3px solid #e5484d}.st tr.lo td{border-top:3px solid #f59e0b}
 .dtb{position:relative;z-index:60}
 /* ===== Правки: тема, банк, конструктор ===== */
-@media (prefers-reduced-motion:no-preference){.theming,.theming *,.theming *::before,.theming *::after{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease,fill .45s ease,stroke .45s ease!important}}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.4s}
 .bx{justify-content:flex-start;margin:14px 0 0}.bx button{flex:0 0 auto;min-height:38px;padding:7px 14px;font-size:.9rem;border-radius:12px}
 .bbar .sm{align-items:center;gap:12px;padding:0}
 .bbar .sm div{text-align:center;min-width:92px;padding:7px 14px;background:var(--accs);border-radius:14px}
 .bbar .sm b{display:block;margin:2px 0 0;font-size:1.05rem;text-align:center}.bbar .sm small{text-align:center}
+.sbg{display:flex;flex-direction:column;gap:6px;padding:8px 0;margin:0 0 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sbi.sj.on,.sbi.sj.on:hover{background:var(--accs);color:var(--acc)}
 </style></head><body><div id="app"></div>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -153,10 +155,10 @@ table.sc tr.bred td{border-bottom:3px solid #e5383b}table.sc tr.bor td{border-bo
 const CFG={time:235,max:33,part1Last:13,scale:[0,6,11,17,22,27,34,40,46,52,58,64,70,72,74,76,78,80,82,84,86,88,90,92,93,94,95,96,97,98,99,100,100,100],edge:{red:5,orange:7}, // scale: {первичный:тестовый} — после утверждения шкалы
  topics:['Планиметрия','Векторы','Стереометрия','Простая вероятность','Сложная вероятность','Случайная величина, мат. ожидание','Простейшие уравнения','Вычисления и преобразования','Производная и первообразная','Прикладная задача','Текстовая задача','Графики функций','Финансовая задача','Уравнение','Стереометрия','Неравенство','Математическое моделирование','Планиметрия','Задача с параметром','Теория чисел'],
  pts:[1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,2,2,3,4,4]};
-const T=CFG.topics,M=CFG.pts,N=T.length,part=n=>n<=CFG.part1Last?1:2;
+let T=CFG.topics,M=CFG.pts,N=T.length;const part=n=>n<=CFG.part1Last?1:2;
 const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=s=>esc(s).replace(/\n/g,'<br>'),uid=()=>crypto.randomUUID();
-const norm=s=>String(s||'').trim().replace(/\s+/g,'').replace(/,/g,'.');
+const norm=s=>String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,'').replace(/,/g,'.');
 const typeset=()=>{try{window.MathJax&&MathJax.typesetPromise&&MathJax.typesetPromise()}catch(e){}};
 addEventListener('load',typeset);
 function load(){try{return JSON.parse(localStorage.getItem('ege27'))||{bank:[],vars:[],att:[]}}catch(e){return{bank:[],vars:[],att:[]}}}
@@ -170,14 +172,21 @@ const hm=m=>Math.floor(m/60)+' ч '+(m%60)+' мин';
 const fT=r=>{const h=Math.floor(r/3600),m=Math.floor(r%3600/60),s=r%60;return h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
 const nOpts=(sel,all)=>(all?'<option value="0">Все номера</option>':'')+T.map((x,i)=>`<option value="${i+1}" ${sel==i+1?'selected':''}>${i+1} · ${esc(x)}</option>`).join('');
 
+const RUS=['Логико-смысловые отношения между предложениями','Лексический анализ слова','Функциональная стилистика и культура речи','Нормы постановки ударения','Паронимы и лексические нормы','Лексическая сочетаемость, тавтология, плеоназм','Морфологические нормы','Синтаксические нормы','Гласные и согласные в корне','Приставки, Ъ и Ь, Ы и И после приставок','Правописание суффиксов','Окончания глаголов, суффиксы причастий и деепричастий','Правописание НЕ и НИ','Слитное, раздельное и дефисное написание','Н и НН','Пунктуация: однородные члены и сложное предложение','Знаки препинания при обособлении','Вводные конструкции, обращения, междометия','Пунктуация в сложном предложении','Пунктуация в сложном предложении с разными видами связи','Пунктуационный анализ','Изобразительно-выразительные средства','Информационно-смысловая переработка текста','Виды информации и смысловые отношения','Лексический анализ','Средства связи и отношения между предложениями','Сочинение по прочитанному тексту'];
+const SJ={math:{name:'Математика (профиль)',short:'Математика',topics:CFG.topics,pts:CFG.pts,p1:CFG.part1Last,time:CFG.time,max:CFG.max,icon:'sigma'},rus:{name:'Русский язык',short:'Русский язык',topics:RUS,pts:RUS.map((_,i)=>i==7||i==21?2:i==26?22:1),p1:26,time:210,max:50,icon:'aa'}};
+let SUBJ='math',HASSUB=false;try{const q=localStorage.getItem('ege27subj');if(q&&SJ[q])SUBJ=q}catch(e){}
+function setSubj(k){SUBJ=k;const j=SJ[k];CFG.topics=j.topics;CFG.pts=j.pts;CFG.part1Last=j.p1;CFG.time=j.time;CFG.max=j.max;T=j.topics;M=j.pts;N=T.length}
+setSubj(SUBJ);
+const sbn=()=>S.bank.filter(t=>(t.subj||'math')==SUBJ).length,vsub=a=>{const v=S.vars.find(x=>x.id==a.vid);return v?(v.subj||'math'):'math'};
 let SBO=(()=>{try{const v=localStorage.getItem('ege27sb');if(v!==null)return v=='1'}catch(e){}return innerWidth>700})();
 const IC2={menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',book:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19a2 2 0 012-2h13"/>',scale:'<path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/>',build:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6M16 5a3 3 0 010 6M18 14c2 .6 3 2.4 3 5"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',moon:'<path d="M20 14A8 8 0 019.5 4 8 8 0 1020 14z"/>',out:'<path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9"/>',chart:'<path d="M5 20V11M12 20V4M19 20v-6"/>'};
+IC2.sigma='<path d="M17 5H7l6 7-6 7h10"/>';IC2.aa='<path d="M3 19l5-12 5 12M5 15h6M15 19v-6a2 2 0 014 0v6M15 16h4"/>';
 const ic=k=>`<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${IC2[k]}</svg>`;
 function tstA(a){const v=S.vars.find(x=>x.id==a.vid);if(!v||!CFG.scale)return'';const mx=vt(v).reduce((q,t)=>q+M[t.n-1],0),n=score(a).total;return mx==CFG.max&&CFG.scale[n]!=null?'Примерный тестовый балл: '+CFG.scale[n]+' (по прогнозу шкалы)':''}
 function go(v,c){if(innerWidth<=700)SBO=false;if(!TUT&&!['home','solve','result','bank','build','one','scale'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
 function render(){clearInterval(tm);if(V=='login'){document.body.classList.add('lg');$('#app').innerHTML='<main>'+VIEWS.login()+'</main>';if(window.dfb)dfb();return}
- const tabs=[['home','Главная','home'],['bank','Банк заданий','book'],['build','Конструктор','build'],['scale','Шкала перевода баллов ЕГЭ','scale']].concat(SH&&TUT?[['res','Ученики','users']]:[]);
- $('#app').innerHTML=`<aside id="sb" class="noprint ${SBO?'open':''}"><button class="sbi sbt" data-a="sbt" title="Свернуть или развернуть меню" aria-label="Меню">${ic('menu')}<span class="lb">Меню</span></button>${tabs.map(([k,l,i])=>`<button class="sbi ${V==k?'on':''}" data-a="go" data-v="${k}" title="${l}">${ic(i)}<span class="lb">${l}</span></button>`).join('')}<div class="sbf"><button class="sbi" data-a="theme" title="Сменить тему">${ic(theme()=='dark'?'sun':'moon')}<span class="lb">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</span></button>${SH?`<button class="sbi" data-a="out" title="Выйти">${ic('out')}<span class="lb">Выйти</span></button>`:''}</div></aside><div id="sbm" class="noprint ${SBO?'open':''}" data-a="sbt"></div><header class="noprint"><button class="hb" data-a="sbt" aria-label="Меню">${ic('menu')}</button><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span></header><main>${VIEWS[V]()}</main>`;
+ const tabs=[['home','Главная','home'],['bank','Банк заданий','book'],['build','Конструктор','build']].concat(SUBJ=='math'?[['scale','Шкала перевода баллов ЕГЭ','scale']]:[]).concat(SH&&TUT?[['res','Ученики','users']]:[]);
+ $('#app').innerHTML=`<aside id="sb" class="noprint ${SBO?'open':''}"><button class="sbi sbt" data-a="sbt" title="Свернуть или развернуть меню" aria-label="Меню">${ic('menu')}<span class="lb">Меню</span></button><div class="sbg">${Object.keys(SJ).map(k=>`<button class="sbi sj ${SUBJ==k?'on':''}" data-a="subj" data-v="${k}" title="${SJ[k].name}">${ic(SJ[k].icon)}<span class="lb">${SJ[k].short}</span></button>`).join('')}</div>${tabs.map(([k,l,i])=>`<button class="sbi ${V==k?'on':''}" data-a="go" data-v="${k}" title="${l}">${ic(i)}<span class="lb">${l}</span></button>`).join('')}<div class="sbf"><button class="sbi" data-a="theme" title="Сменить тему">${ic(theme()=='dark'?'sun':'moon')}<span class="lb">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</span></button>${SH?`<button class="sbi" data-a="out" title="Выйти">${ic('out')}<span class="lb">Выйти</span></button>`:''}</div></aside><div id="sbm" class="noprint ${SBO?'open':''}" data-a="sbt"></div><header class="noprint"><button class="hb" data-a="sbt" aria-label="Меню">${ic('menu')}</button><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span></header><main>${VIEWS[V]()}</main>`;
  document.body.classList.toggle('sbo',SBO);document.body.classList.remove('lg');if(V=='solve'){tick();tm=setInterval(tick,1000)}
  if(V=='bank')fillList();hydrate();if(window.dfb)dfb();if(V=='build')bsum();
  typeset()}
@@ -185,14 +194,14 @@ function tick(){const a=att();if(!a)return;const v=S.vars.find(x=>x.id==a.vid),e
  const r=v.limit*60-Math.floor((Date.now()-a.start)/1000);if(r<=0){A.finish();return}el.textContent=C.hide?'скрыт':fT(r)}
 
 const VIEWS={
-home(){const a=S.att.filter(x=>!x.done).slice(-1)[0],vs=S.vars.filter(v=>!v.own||v.own==ME).reverse();
- return `<h1>Здравствуйте${NAME?', '+esc(NAME):''}</h1><p class="mut">${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p>
- ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:`${TUT?`<button class="btn big" data-a="go" data-v="${S.bank.length?'build':'bank'}">${S.bank.length?'Составить первый вариант':'Добавить первое задание'}</button>`:S.bank.length?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}`}
+home(){const a=S.att.filter(x=>!x.done&&vsub(x)==SUBJ).slice(-1)[0],vs=S.vars.filter(v=>(!v.own||v.own==ME)&&(v.subj||'math')==SUBJ).reverse();
+ return `<h1>Здравствуйте${NAME?', '+esc(NAME):''}</h1><p class="mut">${SJ[SUBJ].name} · ${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p>
+ ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:`${TUT?`<button class="btn big" data-a="go" data-v="${sbn()?'build':'bank'}">${sbn()?'Составить первый вариант':'Добавить первое задание'}</button>`:sbn()?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}`}
  <h2>Варианты</h2>${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
  <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT||v.own==ME?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')||'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Репетитор ещё не опубликовал варианты.')+'</p>'}`},
 
 bank(){if(!TUT)return `<h1>Банк заданий</h1><p class="mut">Выберите задание и решите его сами: введите ответ и нажмите «Проверить».</p><div class="row"><label>Номер<select id="flt">${nOpts(0,1)}</select></label><label>Поиск<input id="fq" placeholder="текст или код"></label></div><div id="lst"></div>`;const f=C.f||{n:1,topic:T[0],diff:'П'},e=C.e||{};
- return `<h1>Банк заданий</h1><p class="mut">В банке: ${S.bank.length}. ${C.msg?`<span class="bad">${esc(C.msg)}</span>`:''}</p>
+ return `<h1>Банк заданий</h1><p class="mut">В банке: ${sbn()}. ${C.msg?`<span class="bad">${esc(C.msg)}</span>`:''}</p>
  <div class="card"><h2 style="margin-top:0">${C.eid?'Редактирование задания':'Новое задание'}</h2>
  <div class="row"><label>Номер<select id="fn">${nOpts(f.n)}</select></label><label>Тема<input id="ft" value="${esc(f.topic)}"></label></div>
  <label>Условие (формулы в долларах: $x^2+1$)<textarea id="fx" rows="4">${esc(e.text)}</textarea></label><div class="pv" id="pv">${fmt(e.text)}</div>
@@ -205,7 +214,7 @@ bank(){if(!TUT)return `<h1>Банк заданий</h1><p class="mut">Выбер
  ${SH&&TUT&&LEG&&LEG.bank.length&&!MIG?`<div class="card"><b>На этом устройстве найдено заданий: ${LEG.bank.length}</b><p class="mut">Перенесите их в общий банк, чтобы они были доступны с любого устройства.</p><button class="btn" data-a="migr">Перенести в общий банк</button></div>`:''}<details class="card"><summary>Резервная копия и демо</summary><p class="mut">Скопируйте текст и сохраните у себя (картинки в копию не входят: они хранятся только в этом браузере). Для восстановления вставьте его в поле и нажмите «Импортировать».</p>
  <textarea id="bk" rows="5">${esc(JSON.stringify(S.bank))}</textarea><div class="row"><button data-a="imp">Импортировать</button><button data-a="demo">Загрузить демо-примеры</button></div></details>`},
 
-build(){const cnt=n=>S.bank.filter(t=>t.n==n).length;
+build(){const cnt=n=>S.bank.filter(t=>t.n==n&&(t.subj||'math')==SUBJ).length;
  const row=n=>{const c=cnt(n),on=c>0?1:0;return `<div class="brow ${on?'on':''} ${c?'':'na'}"><div class="bn">${n}</div><div class="bt"><b>${esc(T[n-1])}</b><small>Заданий: ${c} · ${M[n-1]} б.</small></div><div class="stp"><button data-a="bstep" data-v="${n}:-1" ${c?'':'disabled'} aria-label="Меньше">−</button><input class="stv" data-n="${n}" data-max="${Math.min(c,10)}" value="${on}" readonly><button data-a="bstep" data-v="${n}:1" ${c?'':'disabled'} aria-label="Больше">+</button></div></div>`};
  const rng=(a,b)=>Array.from({length:b-a+1},(_,i)=>row(a+i)).join('');
  return `<h1>Конструктор вариантов</h1><p class="mut">Выберите, сколько заданий взять по каждому номеру. Задачи подбираются из банка случайно.</p>${C.msg?`<p class="bad">${esc(C.msg)}</p>`:''}
@@ -219,7 +228,7 @@ solve(){const a=att(),v=S.vars.find(x=>x.id==a.vid),ts=vt(v),t=ts[a.i];if(!t)ret
  return `<div class="bar"><b>${esc(v.name)}</b>${v.limit?`<span>⏱ <span id="tm"></span> <button class="lnk" data-a="hide">${C.hide?'показать':'скрыть'}</button></span>`:'<span class="mut">'+(v.mode=='exam'?'без ограничения времени':'тренировка')+'</span>'}</div>
  <div class="chips">${ts.map((x,i)=>`<button class="chip ${i==a.i?'on':''} ${norm(a.answers[x.id])?'dn':''}" data-a="jump" data-v="${i}">${x.n}</button>`).join('')}</div>
  <div class="card"><div class="bar"><div class="mut">№${t.n} · ${esc(t.topic||T[t.n-1])} · ${M[t.n-1]} б.</div>${dtb()}</div><div class="txt">${fmt(t.text)}</div>${timg(t)}
- ${p1?`<input data-f="ans" data-t="${t.id}" value="${esc(a.answers[t.id])}" placeholder="Ответ" inputmode="decimal" style="max-width:280px">`:`<textarea data-f="ans" data-t="${t.id}" rows="6" placeholder="Запишите ход решения. Подробное решение можно оформить на бумаге.">${esc(a.answers[t.id])}</textarea>`}
+ ${p1?`<input data-f="ans" data-t="${t.id}" value="${esc(a.answers[t.id])}" placeholder="Ответ" inputmode="${SUBJ=='math'?'decimal':'text'}" style="max-width:280px">`:`<textarea data-f="ans" data-t="${t.id}" rows="6" placeholder="Запишите ход решения. Подробное решение можно оформить на бумаге.">${esc(a.answers[t.id])}</textarea>`}
  ${k&&p1?(ok(a,t)?'<p class="good">Верно</p>':`<p class="bad">Пока неверно. Правильный ответ: ${esc(t.answer)}</p>`):''}
  <div class="row" style="margin-top:16px">${a.i>0?'<button data-a="jump" data-v="'+(a.i-1)+'">Назад</button>':''}${p1&&v.mode=='train'?'<button data-a="chk" data-v="'+t.id+'">Проверить</button>':''}${a.i<ts.length-1?'<button class="btn" data-a="jump" data-v="'+(a.i+1)+'">Дальше</button>':''}<button data-a="finish">Завершить</button></div></div>`},
 
@@ -234,7 +243,7 @@ login(){if(C.load)return'<p class="mut">Загрузка…</p>';const r=C.reg;r
 one(){const t=S.bank.find(x=>x.id==C.tid);if(!t)return'<p>Задание не найдено.</p>';const p1=part(t.n)==1,r=C.res;
  return `<div class="bar"><button data-a="go" data-v="bank">← К банку заданий</button><span class="mut">№${t.n} · ${esc(t.topic||T[t.n-1])} · ${M[t.n-1]} б.${t.code?' · '+esc(t.code):''}</span></div>
  <div class="card"><div class="txt">${fmt(t.text)}</div>${timg(t)}
- ${p1?`<input id="oa" value="${esc(C.val||'')}" placeholder="Ответ" inputmode="decimal" style="max-width:280px"><div class="row" style="margin-top:14px"><button class="btn" data-a="chkone">Проверить</button></div>`:`<textarea id="oa" rows="6" placeholder="Запишите ход решения">${esc(C.val||'')}</textarea><div class="row" style="margin-top:14px"><button class="btn" data-a="chkone">Показать решение</button></div>`}
+ ${p1?`<input id="oa" value="${esc(C.val||'')}" placeholder="Ответ" inputmode="${SUBJ=='math'?'decimal':'text'}" style="max-width:280px"><div class="row" style="margin-top:14px"><button class="btn" data-a="chkone">Проверить</button></div>`:`<textarea id="oa" rows="6" placeholder="Запишите ход решения">${esc(C.val||'')}</textarea><div class="row" style="margin-top:14px"><button class="btn" data-a="chkone">Показать решение</button></div>`}
  ${C.msg?`<p class="bad">${esc(C.msg)}</p>`:''}${r==1?'<p class="good">Верно</p>':r==2?`<p class="bad">Неверно. Правильный ответ: ${esc(t.answer)}</p>`:''}
  ${r==3?(t.solution?`<div class="pv">${fmt(t.solution)}</div>`:'<p class="mut">Для этого задания решение не добавлено.</p>'):''}
  <div class="row" style="margin-top:14px"><button data-a="onenx" data-v="-1">Предыдущее</button><button data-a="onenx" data-v="1">Следующее</button></div></div>`},
@@ -245,7 +254,7 @@ scale(){const sc=CFG.scale,E=CFG.edge;let rows='';
  return `<h1>Шкала перевода баллов ЕГЭ</h1><p class="mut">Прогноз шкалы на 2027 год: первичный балл (максимум ${CFG.max}) переводится в тестовый (максимум 100). Официальная шкала будет утверждена позже.</p>
  <div class="card"><p style="margin:0 0 12px"><span class="lgd red"></span>Красная линия: минимальный порог для получения аттестата и поступления в вузы (от ${E.red} первичных, ${sc[E.red]} тестовых).</p><p style="margin:0"><span class="lgd ora"></span>Оранжевая линия: порог для поступления в вузы, подведомственные Минобрнауки (от ${E.orange} первичных, ${sc[E.orange]} тестовых).</p></div>
  <div class="card"><div class="tw"><table class="sc"><tr><th>Первичный балл</th><th>Тестовый балл</th></tr>${rows}</table></div></div>`},
-res(){const l=S.att.filter(a=>a.done).sort((x,y)=>(y.end||0)-(x.end||0));
+res(){const l=S.att.filter(a=>a.done&&vsub(a)==SUBJ).sort((x,y)=>(y.end||0)-(x.end||0));
  return `<h1>Результаты учеников</h1><p class="mut">Откройте работу, чтобы проверить часть 2 и поставить баллы.</p><div class="card">${l.map(a=>{const v=S.vars.find(x=>x.id==a.vid);return `<div class="it"><div><b>${esc(PN[a.uid]||'Ученик')}</b><div class="mut">${esc(v?v.name:'вариант удалён')} · ${a.end?new Date(a.end).toLocaleDateString('ru-RU'):''}</div></div><div class="row" style="flex:0 0 auto;margin:0;align-items:center"><span>${v?score(a).total+' б.':''}</span>${v?`<button data-a="open" data-v="${a.id}">Открыть</button>`:''}</div></div>`}).join('')||'<span class="mut">Пока нет завершённых работ.</span>'}</div>`},
 stats(){const rows=T.map((x,i)=>{const n=i+1,ts=S.bank.filter(t=>t.n==n);let g=0,tot=0;
   S.att.filter(a=>a.done).forEach(a=>{const v=S.vars.find(q=>q.id==a.vid);if(!v)return;vt(v).filter(t=>t.n==n).forEach(t=>{tot+=M[i];g+=part(n)==1?(ok(a,t)?1:0):(a.self[t.id]||0)})});
@@ -264,8 +273,8 @@ async function bxs(id,k){const t=S.bank.find(x=>x.id==id);if(!t)return;const st=
  const ba=document.querySelector('[data-a="sans"][data-v="'+id+'"]'),bs=document.querySelector('[data-a="ssol"][data-v="'+id+'"]');if(ba)ba.textContent=st.a?'Скрыть ответ':'Показать ответ';if(bs)bs.textContent=st.s?'Скрыть решение':'Показать решение';typeset()}
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key=='Enter'&&t.id&&t.id.indexOf('ba-')==0){const b=document.querySelector('[data-a="bchk"][data-v="'+t.id.slice(3)+'"]');if(b&&!b.disabled)b.click()}});
 function fillList(){const el=$('#lst');if(!el)return;const n=+($('#flt')||{}).value||0,q=(($('#fq')||{}).value||'').toLowerCase(),lim=C.lim||20;
- const l=S.bank.filter(t=>(!n||t.n==n)&&(!q||(t.text+t.code).toLowerCase().includes(q))).sort((a,b)=>a.n-b.n);
- el.innerHTML=l.slice(0,lim).map(t=>{const p1=part(t.n)==1,v=BV[t.id]||'';return `<div class="card ${BS[t.id]==1?'okc':BS[t.id]==2?'badc':''}"><div class="bar"><span class="mut"><b>№${t.n}</b> · ${esc(t.topic||T[t.n-1])}${t.code?' · '+esc(t.code):''}</span>${TUT?`<span class="row" style="flex:0 0 auto;margin:0"><button data-a="edit" data-v="${t.id}">Изменить</button><button data-a="delt" data-v="${t.id}">Удалить</button></span>`:''}${dtb()}</div><div class="txt">${fmt(t.text)}</div>${timg(t)}${p1?`<div class="row"><input id="ba-${t.id}" value="${esc(v)}" placeholder="Ответ" inputmode="decimal" style="max-width:240px"><button class="btn" data-a="bchk" data-v="${t.id}" style="flex:0 0 auto" ${v.trim()?'':'disabled'}>Проверить</button></div>`:''}<div id="br-${t.id}">${BR[t.id]||''}</div><div class="row bx">${p1?`<button data-a="sans" data-v="${t.id}">${(BX[t.id]||{}).a?'Скрыть ответ':'Показать ответ'}</button>`:''}<button data-a="ssol" data-v="${t.id}">${(BX[t.id]||{}).s?'Скрыть решение':'Показать решение'}</button></div><div id="bx-${t.id}">${bxh(t)}</div></div>`}).join('')||'<p class="mut">Здесь пока пусто.</p>';
+ const l=S.bank.filter(t=>(t.subj||'math')==SUBJ&&(!n||t.n==n)&&(!q||(t.text+t.code).toLowerCase().includes(q))).sort((a,b)=>a.n-b.n);
+ el.innerHTML=l.slice(0,lim).map(t=>{const p1=part(t.n)==1,v=BV[t.id]||'';return `<div class="card ${BS[t.id]==1?'okc':BS[t.id]==2?'badc':''}"><div class="bar"><span class="mut"><b>№${t.n}</b> · ${esc(t.topic||T[t.n-1])}${t.code?' · '+esc(t.code):''}</span>${TUT?`<span class="row" style="flex:0 0 auto;margin:0"><button data-a="edit" data-v="${t.id}">Изменить</button><button data-a="delt" data-v="${t.id}">Удалить</button></span>`:''}${dtb()}</div><div class="txt">${fmt(t.text)}</div>${timg(t)}${p1?`<div class="row"><input id="ba-${t.id}" value="${esc(v)}" placeholder="Ответ" inputmode="${SUBJ=='math'?'decimal':'text'}" style="max-width:240px"><button class="btn" data-a="bchk" data-v="${t.id}" style="flex:0 0 auto" ${v.trim()?'':'disabled'}>Проверить</button></div>`:''}<div id="br-${t.id}">${BR[t.id]||''}</div><div class="row bx">${p1?`<button data-a="sans" data-v="${t.id}">${(BX[t.id]||{}).a?'Скрыть ответ':'Показать ответ'}</button>`:''}<button data-a="ssol" data-v="${t.id}">${(BX[t.id]||{}).s?'Скрыть решение':'Показать решение'}</button></div><div id="bx-${t.id}">${bxh(t)}</div></div>`}).join('')||'<p class="mut">Здесь пока пусто.</p>';
  if(l.length>lim)el.innerHTML+='<button data-a="more">Показать ещё</button>';hydrate();typeset();if(window.dupd)dupd()}
 
 try{const st=localStorage.getItem('ege27theme');if(st)document.documentElement.dataset.theme=st}catch(e){}
@@ -289,20 +298,21 @@ const stat=()=>!SH?'':NW?'Ошибка сохранения: проверьте 
 const mark=()=>{const e=$('#st');if(e)e.textContent=stat()},E=r=>{if(r.error)throw r.error;return r.data};
 function sync(){if(!SH)return;clearTimeout(tmr);tmr=setTimeout(()=>doSync().catch(e=>{console.error(e);NW=true;mark()}),400)}
 async function doSync(){
- if(!TUT){for(const v of S.vars)if(v.own==ME){const j=JSON.stringify(v);if(SY.vars[v.id]!==j){SY.vars[v.id]=j;E(await sb.from('variants').upsert({id:v.id,name:v.name,limit_min:v.limit,owner:ME}));E(await sb.from('variant_tasks').delete().eq('variant_id',v.id));if(v.ids.length)E(await sb.from('variant_tasks').insert(v.ids.map((t,i)=>({variant_id:v.id,task_id:t,pos:i}))))}}for(const id in SY.vars)if(!S.vars.some(x=>x.id==id)){delete SY.vars[id];E(await sb.from('variants').delete().eq('id',id))}}
+ if(!TUT){for(const v of S.vars)if(v.own==ME){const j=JSON.stringify(v);if(SY.vars[v.id]!==j){SY.vars[v.id]=j;E(await sb.from('variants').upsert(SU({id:v.id,name:v.name,limit_min:v.limit,owner:ME},v.subj)));E(await sb.from('variant_tasks').delete().eq('variant_id',v.id));if(v.ids.length)E(await sb.from('variant_tasks').insert(v.ids.map((t,i)=>({variant_id:v.id,task_id:t,pos:i}))))}}for(const id in SY.vars)if(!S.vars.some(x=>x.id==id)){delete SY.vars[id];E(await sb.from('variants').delete().eq('id',id))}}
  if(TUT){
-  for(const x of S.bank){const j=JSON.stringify(x);if(SY.bank[x.id]!==j){SY.bank[x.id]=j;E(await sb.from('tasks').upsert({id:x.id,n:x.n,topic:x.topic,text:x.text,img:x.img||null,code:x.code||null}));E(await sb.from('task_answers').upsert({task_id:x.id,answer:x.answer,solution:x.solution}))}}
+  for(const x of S.bank){const j=JSON.stringify(x);if(SY.bank[x.id]!==j){SY.bank[x.id]=j;E(await sb.from('tasks').upsert(SU({id:x.id,n:x.n,topic:x.topic,text:x.text,img:x.img||null,code:x.code||null},x.subj)));E(await sb.from('task_answers').upsert({task_id:x.id,answer:x.answer,solution:x.solution}))}}
   for(const id in SY.bank)if(!S.bank.some(x=>x.id==id)){delete SY.bank[id];E(await sb.from('tasks').delete().eq('id',id))}
-  for(const v of S.vars){const j=JSON.stringify(v);if(SY.vars[v.id]!==j){SY.vars[v.id]=j;E(await sb.from('variants').upsert({id:v.id,name:v.name,limit_min:v.limit}));E(await sb.from('variant_tasks').delete().eq('variant_id',v.id));if(v.ids.length)E(await sb.from('variant_tasks').insert(v.ids.map((t,i)=>({variant_id:v.id,task_id:t,pos:i}))))}}
+  for(const v of S.vars){const j=JSON.stringify(v);if(SY.vars[v.id]!==j){SY.vars[v.id]=j;E(await sb.from('variants').upsert(SU({id:v.id,name:v.name,limit_min:v.limit},v.subj)));E(await sb.from('variant_tasks').delete().eq('variant_id',v.id));if(v.ids.length)E(await sb.from('variant_tasks').insert(v.ids.map((t,i)=>({variant_id:v.id,task_id:t,pos:i}))))}}
   for(const id in SY.vars)if(!S.vars.some(x=>x.id==id)){delete SY.vars[id];E(await sb.from('variants').delete().eq('id',id))}
   for(const x of S.asg){const k=x.vid+'|'+x.sid;if(!SY.asg[k]){SY.asg[k]=1;E(await sb.from('assignments').upsert({variant_id:x.vid,student_id:x.sid}))}}
   for(const k in SY.asg)if(!S.asg.some(x=>x.vid+'|'+x.sid==k)){delete SY.asg[k];const[p,q]=k.split('|');E(await sb.from('assignments').delete().eq('variant_id',p).eq('student_id',q))}
   for(const a of S.att)if(a.uid!=ME){const j=JSON.stringify(a.self);if(SY.sc[a.id]!==j){SY.sc[a.id]=j;const rows=Object.entries(a.self).map(([t,s])=>({attempt_id:a.id,task_id:t,score:s}));if(rows.length)E(await sb.from('scores').upsert(rows))}}
  }else for(const a of S.att)if(!a.done){const j=JSON.stringify(a.answers);if(SY.att[a.id]!==j){SY.att[a.id]=j;E(await sb.from('attempts').upsert({id:a.id,variant_id:a.vid,student_id:ME,answers:a.answers,started_at:new Date(a.start).toISOString()}))}}}
 async function pull(){
+ HASSUB=!(await sb.from('tasks').select('subject').limit(1)).error;
  const t=E(await sb.from('tasks').select(TUT?'*,task_answers(answer,solution)':'*'));
- S.bank=t.map(r=>{const a=[].concat(r.task_answers||[])[0]||{};return{id:r.id,n:r.n,topic:r.topic||'',text:r.text,img:r.img||'',code:r.code||'',answer:a.answer||'',solution:a.solution||''}}).sort((x,y)=>x.n-y.n);
- S.vars=E(await sb.from('variants').select('*,variant_tasks(task_id,pos)')).map(r=>({id:r.id,name:r.name,mode:'exam',limit:r.limit_min,seed:1,own:r.owner||null,ids:(r.variant_tasks||[]).sort((a,b)=>a.pos-b.pos).map(x=>x.task_id)}));
+ S.bank=t.map(r=>{const a=[].concat(r.task_answers||[])[0]||{};return{id:r.id,n:r.n,subj:r.subject||'math',topic:r.topic||'',text:r.text,img:r.img||'',code:r.code||'',answer:a.answer||'',solution:a.solution||''}}).sort((x,y)=>x.n-y.n);
+ S.vars=E(await sb.from('variants').select('*,variant_tasks(task_id,pos)')).map(r=>({id:r.id,name:r.name,mode:'exam',limit:r.limit_min,seed:1,own:r.owner||null,subj:r.subject||'math',ids:(r.variant_tasks||[]).sort((a,b)=>a.pos-b.pos).map(x=>x.task_id)}));
  S.att=E(await sb.from('attempts').select('*,scores(task_id,score)')).map(r=>{const s={};(r.scores||[]).forEach(x=>s[x.task_id]=x.score);return{id:r.id,vid:r.variant_id,uid:r.student_id,start:Date.parse(r.started_at),end:r.finished_at?Date.parse(r.finished_at):0,done:r.done,answers:r.answers||{},self:s,chk:{},i:0}});
  if(TUT){S.asg=E(await sb.from('assignments').select('*')).map(r=>({vid:r.variant_id,sid:r.student_id}));S.stu=E(await sb.from('profiles').select('id,name,role'));S.stu.forEach(p=>PN[p.id]=p.name)}
  SY={bank:{},vars:{},asg:{},sc:{},att:{}};S.bank.forEach(x=>SY.bank[x.id]=JSON.stringify(x));S.vars.forEach(x=>SY.vars[x.id]=JSON.stringify(x));S.asg.forEach(x=>SY.asg[x.vid+'|'+x.sid]=1);S.att.forEach(a=>{SY.sc[a.id]=JSON.stringify(a.self);SY.att[a.id]=JSON.stringify(a.answers)})}
@@ -347,6 +357,8 @@ window.dupd=upd;window.dsw=()=>{redraw();apply();upd()};window.dclr=()=>{strokes
 window.dfb=()=>{const ok=okV();cv.hidden=!ok;if(ok){const r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;if(cv.width!=Math.round(r.width*d)||cv.height!=Math.round(r.height*d))size();else redraw()}else{strokes=[];tool='cur';apply()}upd()};
 })();
 const theme=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+const SU=(o,s)=>{if(HASSUB)o.subject=s||'math';return o};
+function note(t){if($('#md'))return;const d=document.createElement('div');d.id='md';d.className='noprint';d.innerHTML='<div class="mb" role="dialog" aria-modal="true"><p>'+esc(t)+'</p><div class="row"><button class="btn" data-a="outno">Понятно</button></div></div>';d.onclick=e=>{if(e.target==d)d.remove()};document.body.append(d)}
 function bsum(){let k=0,p=0;document.querySelectorAll('#aut .stv').forEach(i=>{const c=+i.value||0,n=+i.dataset.n;k+=c;p+=c*M[n-1];i.closest('.brow').classList.toggle('on',c>0)});const a=$('#bsn'),b=$('#bsp'),g=$('#bgo');if(a)a.textContent=k;if(b)b.textContent=p;if(g)g.disabled=!k}
 function busy(a,txt){const b=document.querySelector('[data-a="'+a+'"]');if(!b)return()=>{};const t=b.textContent;b.disabled=true;b.innerHTML='<span class="spin"></span>'+txt;return()=>{b.disabled=false;b.textContent=t}}
 const lerr=m=>{const e=$('#lmsg');if(e)e.textContent=m},
@@ -363,7 +375,8 @@ ae=e=>{const m=((e&&e.message)||'').toLowerCase(),c=(e&&e.code)||'';
  return'Не удалось выполнить действие. Попробуйте ещё раз.'};
 document.addEventListener('keydown',e=>{if(e.key=='Enter'&&['lm','lp','ln'].includes(e.target.id)){const b=document.querySelector('[data-a="login"],[data-a="reg"]');if(b)b.click()}});
 const A={
-theme:()=>{const t=theme()=='dark'?'light':'dark';document.documentElement.classList.add('theming');document.documentElement.dataset.theme=t;try{localStorage.setItem('ege27theme',t)}catch(e){}const tb=document.querySelector('[data-a="theme"]');if(tb)tb.innerHTML=ic(t=='dark'?'sun':'moon')+'<span class="lb">'+(t=='dark'?'Светлая тема':'Тёмная тема')+'</span>';if(window.dsw)dsw();clearTimeout(window._tt);window._tt=setTimeout(()=>document.documentElement.classList.remove('theming'),550)},
+theme:()=>{const t=theme()=='dark'?'light':'dark',ap=()=>{document.documentElement.dataset.theme=t;try{localStorage.setItem('ege27theme',t)}catch(e){}const tb=document.querySelector('[data-a="theme"]');if(tb)tb.innerHTML=ic(t=='dark'?'sun':'moon')+'<span class="lb">'+(t=='dark'?'Светлая тема':'Тёмная тема')+'</span>';if(window.dsw)dsw()};
+ if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion:reduce)').matches)document.startViewTransition(ap);else ap()},
 bstep:v=>{const[n,d]=v.split(':'),i=document.querySelector('#aut .stv[data-n="'+n+'"]');i.value=Math.max(0,Math.min(+i.dataset.max,(+i.value||0)+ +d));bsum()},
 tm:v=>{$('#bl').value=v;document.querySelectorAll('[data-a="tm"]').forEach(x=>x.classList.toggle('on',x.dataset.v==v))},
 bq:v=>{document.querySelectorAll('#aut .stv').forEach(i=>{const n=+i.dataset.n,mx=+i.dataset.max,p1=n<=CFG.part1Last;i.value=v=='all'?Math.min(1,mx):v=='p1'?(p1?Math.min(1,mx):0):v=='p2'?(p1?0:Math.min(1,mx)):0});bsum()},
@@ -376,6 +389,7 @@ reg:async()=>{const n=$('#ln').value.trim(),m=$('#lm').value.trim(),p=$('#lp').v
   if(r.data.session){await boot()}else{C.msg='Проверьте почту, подтвердите регистрацию и войдите.';C.reg=0;render()}}
  catch(e){done();lerr('Не удалось зарегистрироваться. Проверьте соединение и попробуйте снова.')}},
 out:()=>{if($('#md'))return;const d=document.createElement('div');d.id='md';d.className='noprint';d.innerHTML='<div class="mb" role="dialog" aria-modal="true"><p>Вы точно хотите выйти?</p><div class="row"><button class="btn" data-a="outyes">Да, выйти</button><button data-a="outno">Остаться</button></div></div>';d.onclick=e=>{if(e.target==d)d.remove()};document.body.append(d)},
+subj:k=>{if(k==SUBJ)return;if(k!='math'&&!HASSUB){note(TUT?'Чтобы включить русский язык, один раз выполните SQL-скрипт в Supabase (SQL Editor): он добавляет в базу поле «предмет».':'Этот предмет пока недоступен. Обратитесь к репетитору.');return}setSubj(k);try{localStorage.setItem('ege27subj',k)}catch(e){}go('home')},
 sbt:()=>{SBO=!SBO;try{localStorage.setItem('ege27sb',SBO?'1':'0')}catch(e){}const a=$('#sb'),m=$('#sbm');if(a)a.classList.toggle('open',SBO);if(m)m.classList.toggle('open',SBO);document.body.classList.toggle('sbo',SBO)},
 outno:()=>{const d=$('#md');if(d)d.remove()},
 outyes:async()=>{await sb.auth.signOut();location.reload()},
@@ -412,19 +426,19 @@ delv:id=>{S.vars=S.vars.filter(v=>v.id!=id);save();render()},
 
 delt:id=>{const x=S.bank.find(t=>t.id==id);if(x&&x.img)idel(x.img);S.bank=S.bank.filter(t=>t.id!=id);save();render()},
 edit:id=>{const t=S.bank.find(x=>x.id==id);go('bank',{eid:id,e:t,img:t.img,orig:t.img,f:{n:t.n,topic:t.topic,diff:t.diff}})},
-saveT:()=>{const n=+$('#fn').value,t={id:C.eid||uid(),n,topic:$('#ft').value.trim()||T[n-1],text:$('#fx').value.trim(),answer:$('#fa').value.trim(),solution:$('#fs').value.trim(),code:$('#fc').value.trim(),img:C.img||''};
+saveT:()=>{const n=+$('#fn').value,t={id:C.eid||uid(),n,topic:$('#ft').value.trim()||T[n-1],text:$('#fx').value.trim(),answer:$('#fa').value.trim(),solution:$('#fs').value.trim(),code:$('#fc').value.trim(),img:C.img||'',subj:SUBJ};
  const f={n,topic:t.topic,diff:t.diff},fail=m=>{C.msg=m;C.f=f;C.e=t;const y=scrollY;render();scrollTo(0,y)};
  if(!t.text&&!C.img)return fail('Введите условие задания или вставьте картинку.');if(part(n)==1&&!t.answer)return fail('Для части 1 нужен ответ.');
  if(t.code&&S.bank.some(x=>x.code==t.code&&x.id!=t.id))return fail('Задание с кодом '+t.code+' уже есть в банке.');
  if(C.eid)S.bank=S.bank.map(x=>x.id==t.id?t:x);else S.bank.push(t);if(C.orig&&C.orig!=t.img)idel(C.orig);save();go('bank',{f})},
-imp:()=>{try{const arr=JSON.parse($('#bk').value);if(!Array.isArray(arr))throw 0;arr.forEach(t=>{if(t&&t.text&&t.n&&!S.bank.some(x=>x.id==t.id))S.bank.push(Object.assign({},t,{id:uid(),img:''}))});save();go('bank',{msg:'Импорт выполнен.'})}catch(e){C.msg='Не удалось прочитать данные. Вставьте текст резервной копии целиком.';render()}},
-demo:()=>{for(let n=1;n<=N;n++)S.bank.push({id:uid(),n,topic:T[n-1],text:'Демо-задание №'+n+'. Найдите $x$, если $x+'+n+'='+2*n+'$.',answer:String(n),solution:'Критерии: обоснованное решение — полный балл.',code:''});save();go('bank')},
+imp:()=>{try{const arr=JSON.parse($('#bk').value);if(!Array.isArray(arr))throw 0;arr.forEach(t=>{if(t&&t.text&&t.n&&!S.bank.some(x=>x.id==t.id))S.bank.push(Object.assign({},t,{id:uid(),img:'',subj:SUBJ}))});save();go('bank',{msg:'Импорт выполнен.'})}catch(e){C.msg='Не удалось прочитать данные. Вставьте текст резервной копии целиком.';render()}},
+demo:()=>{for(let n=1;n<=N;n++)S.bank.push({id:uid(),n,subj:SUBJ,topic:T[n-1],text:'Демо-задание №'+n+'. Найдите $x$, если $x+'+n+'='+2*n+'$.',answer:String(n),solution:'Критерии: обоснованное решение — полный балл.',code:''});save();go('bank')},
 mk:()=>{const mode='auto',seed=+$('#bs').value||1,r=rng(seed);let ids=[],miss=[];
  if(mode=='manual')ids=[...document.querySelectorAll('.mk:checked')].map(x=>x.value);
- else document.querySelectorAll('#aut [data-n]').forEach(i=>{const n=+i.dataset.n,c=+i.value||0;if(!c)return;const p=S.bank.filter(t=>t.n==n).map(t=>[r(),t.id]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);if(!p.length)miss.push(n);ids.push(...p.slice(0,c))});
+ else document.querySelectorAll('#aut [data-n]').forEach(i=>{const n=+i.dataset.n,c=+i.value||0;if(!c)return;const p=S.bank.filter(t=>t.n==n&&(t.subj||'math')==SUBJ).map(t=>[r(),t.id]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);if(!p.length)miss.push(n);ids.push(...p.slice(0,c))});
  if(!ids.length)return go('build',{msg:'Нет задач для варианта. Добавьте задания в банк или отметьте задачи вручную.'});
  ids.sort((a,b)=>S.bank.find(t=>t.id==a).n-S.bank.find(t=>t.id==b).n);
- S.vars.push({id:uid(),name:$('#bn').value.trim()||'Вариант '+(S.vars.length+1),mode:'exam',limit:+$('#bl').value,seed,ids,own:TUT?null:ME});save();A.start(S.vars[S.vars.length-1].id);return;
+ S.vars.push({id:uid(),name:$('#bn').value.trim()||'Вариант '+(S.vars.length+1),mode:'exam',limit:+$('#bl').value,seed,ids,own:TUT?null:ME,subj:SUBJ});save();A.start(S.vars[S.vars.length-1].id);return;
  go('home')}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset.v)});
 document.addEventListener('input',e=>{const t=e.target,f=t.dataset.f;

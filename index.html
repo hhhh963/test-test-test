@@ -276,8 +276,7 @@ function homeStats(n){const kd=d=>d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate
  return{done,ans,streak,bars,per,best:Math.max(0,...bars.map(b=>b[1]))}}
 function chartHtml(st){const n=CHP,mx=st.best,top=mx<=4?4:Math.ceil(mx/4)*4,avg=(st.per/n).toFixed(1).replace('.0','').replace('.',','),step=n==7?1:n==14?2:5;
  const lab=(d,i)=>(n-1-i)%step==0?(n==7?d.toLocaleDateString('ru-RU',{weekday:'short'}):d.getDate()):'';
- return `<div class="card"><div class="bar"><b>График активности</b><div class="seg">${[7,14,30].map(k=>`<button class="${CHP==k?'on':''}" data-a="chp" data-v="${k}">${k} дн.</button>`).join('')}</div></div>
- <p class="mut" style="margin:10px 0 0">Задач сделано за ${n} ${pl(n,['день','дня','дней'])}: <b>${st.per}</b></p>
+ return `<div class="card"><div class="bar" style="align-items:flex-start"><div><b>График активности</b><p class="mut" style="margin:2px 0 0">Задач сделано за ${n} ${pl(n,['день','дня','дней'])}: <b>${st.per}</b></p></div><div class="seg">${[7,14,30].map(k=>`<button class="${CHP==k?'on':''}" data-a="chp" data-v="${k}">${k} дн.</button>`).join('')}</div></div>
  <div class="ch"><div class="cy"><span>${top}</span><span>${top/2}</span><span>0</span></div><div class="cp">${st.bars.map(([d,c],i)=>{const h=Math.round(c/top*100);return `<div class="cb${i==n-1?' td':''}" title="${d.toLocaleDateString('ru-RU')}: ${c}"><div class="bw">${c?`<em style="bottom:calc(${h}% + 3px)">${c}</em><i style="height:${h}%"></i>`:''}</div><span>${lab(d,i)}</span></div>`}).join('')}</div></div>
  </div>`}
 const p4t=t=>{const sc=SJ[SUBJ].scale;for(let p=0;p<sc.length;p++)if(sc[p]>=t)return p;return CFG.max};
@@ -323,7 +322,7 @@ home(){const vs=S.vars.filter(v=>(!v.own||v.own==ME)&&(v.subj||'math')==SUBJ).re
  <h2>Статистика</h2><div class="stats">${nums.map(([t,n])=>`<div class="stat"><b>${n}</b><small>${t}</small></div>`).join('')}</div>
  ${chartHtml(st)}
  ${TUT?'':goalCard()}
- <h2>Варианты</h2>${vs.length?`<div class="card">${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
+ <h2>Варианты</h2>${vs.length?`<div class="card">${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач${v.mode=='exam'?'':' · тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
  <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT||v.own==ME?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')}</div>`:'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Начните решать.')+'</p>'}`},
 friends(){const inc=FR.filter(f=>f.status=='pending'&&f.incoming),out=FR.filter(f=>f.status=='pending'&&!f.incoming),fr=FR.filter(f=>f.status=='accepted'),av=n=>`<span class="av">${esc((n||'?')[0].toUpperCase())}</span>`;
  return `<h1>Друзья</h1><p class="mut">Найдите друга по имени, которое он указал при регистрации.</p>${FRERR?'<p class="bad">Друзья пока недоступны: в базе не выполнен SQL-скрипт. Обратитесь к репетитору.</p>':''}

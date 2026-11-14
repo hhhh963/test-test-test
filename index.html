@@ -200,6 +200,17 @@ header b{background:var(--g);-webkit-background-clip:text;background-clip:text;c
 input[type=range]{padding:0;border:0;background:none;box-shadow:none;accent-color:var(--acc);height:30px;margin:4px 0 8px}
 #md{animation:mf .22s ease}#md .mb{animation:mp .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes mf{from{opacity:0}to{opacity:1}}@keyframes mp{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+/* ===== График ===== */
+.ch{display:flex;gap:8px;height:190px;margin-top:16px}
+.cy{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;font-size:.72rem;color:var(--mut);padding-bottom:24px;min-width:22px;line-height:1}
+.cp{flex:1;display:flex;gap:4px;position:relative}
+.cp::before{content:"";position:absolute;left:0;right:0;top:0;bottom:24px;background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 50%,linear-gradient(var(--line) 1px,transparent 1px) 0 100%/100% 1px no-repeat}
+.cb{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
+.bw{flex:1;position:relative}
+.bw i{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:72%;max-width:28px;border-radius:7px 7px 2px 2px;background:var(--g)}
+.bw em{position:absolute;left:50%;transform:translateX(-50%);font-style:normal;font-size:.7rem;font-weight:600;color:var(--ink)}
+.cb>span{height:24px;line-height:24px;text-align:center;font-size:.7rem;color:var(--mut);white-space:nowrap}
+.cb.td>span{color:var(--acc);font-weight:700}
 </style></head><body><div id="app"></div>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -252,14 +263,23 @@ function cdTick(){const m=$('#cd-m');if(!m)return;const n=new Date();if(n>=CDT){
  const set=(id,v)=>{const e=$('#'+id);if(e&&e.textContent!=String(v)){e.textContent=v;e.classList.remove('tk');void e.offsetWidth;e.classList.add('tk')}};
  const z=x=>String(x).padStart(2,'0');set('cd-y',o.y);set('cd-mo',o.m);set('cd-d',o.d);set('cd-h',z(o.h));set('cd-mi',z(o.mi));set('cd-s',z(o.s))}
 const cdCard=()=>`<div class="cd"><div class="cdl"><small>До 1 июня 2028</small><b id="cd-m">…</b><button class="cdb" id="cd-b" data-a="cdt">${CDO?'Скрыть':'Точнее?'}</button></div><div class="cdp ${CDO?'open':''}" id="cd-p"><div class="cdg">${[['y','лет'],['mo','мес'],['d','дней'],['h','часов'],['mi','минут'],['s','секунд']].map(([k,l])=>`<div class="cdt"><b id="cd-${k}">0</b><small>${l}</small></div>`).join('')}</div></div></div>`;
-function homeStats(n){const kd=d=>d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(),cnt=a=>Object.values(a.answers||{}).filter(v=>String(v||'').trim()).length;
- const at=S.att.filter(a=>vsub(a)==SUBJ&&(TUT?a.uid!=ME:true)),done=at.filter(a=>a.done).length;
- const bd={};(TUT?[]:BCK.filter(x=>x.s==SUBJ)).forEach(x=>{const k=kd(new Date(x.d));(bd[k]=bd[k]||new Set()).add(x.t)});
- const ans=at.reduce((q,a)=>q+cnt(a),0)+Object.values(bd).reduce((q,x)=>q+x.size,0);
- const days=new Set(at.map(a=>kd(new Date(a.start))));Object.keys(bd).forEach(k=>days.add(k));
- let streak=0;const d=new Date();d.setHours(0,0,0,0);if(!days.has(kd(d)))d.setDate(d.getDate()-1);while(days.has(kd(d))){streak++;d.setDate(d.getDate()-1)}
- const bars=[];let per=0;for(let i=n-1;i>=0;i--){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-i);const c=at.filter(a=>kd(new Date(a.start))==kd(x)).reduce((q,a)=>q+cnt(a),0)+(bd[kd(x)]?bd[kd(x)].size:0);per+=c;bars.push([x,c])}
- return{done,ans,streak,bars,per}}
+function homeStats(n){const kd=d=>d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate();
+ const at=S.att.filter(a=>vsub(a)==SUBJ&&(TUT?a.uid!=ME:true));
+ const okn=a=>{if(!a.done)return 0;let p1;if(TUT)p1=score(a).p1;else{p1=a.score1;if(p1==null){try{p1=(JSON.parse(localStorage.getItem('ege27sc')||'{}')[a.id]||{}).p1}catch(e){}}}return(p1||0)+Object.values(a.self||{}).filter(x=>+x>0).length};
+ const act=new Set(),bd={},add=(k,v)=>{bd[k]=(bd[k]||0)+v};
+ at.forEach(a=>{act.add(kd(new Date(a.start)));if(a.done)add(kd(new Date(a.end||a.start)),okn(a))});
+ const bs={};(TUT?[]:BCK.filter(x=>x.s==SUBJ)).forEach(x=>{const k=kd(new Date(x.d));act.add(k);if(x.ok)(bs[k]=bs[k]||new Set()).add(x.t)});
+ Object.keys(bs).forEach(k=>add(k,bs[k].size));
+ const ans=Object.values(bd).reduce((q,v)=>q+v,0),done=at.filter(a=>a.done).length;
+ let streak=0;const d=new Date();d.setHours(0,0,0,0);if(!act.has(kd(d)))d.setDate(d.getDate()-1);while(act.has(kd(d))){streak++;d.setDate(d.getDate()-1)}
+ const bars=[];let per=0;for(let i=n-1;i>=0;i--){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-i);const c=bd[kd(x)]||0;per+=c;bars.push([x,c])}
+ return{done,ans,streak,bars,per,best:Math.max(0,...bars.map(b=>b[1]))}}
+function chartHtml(st){const n=CHP,mx=st.best,top=mx<=4?4:Math.ceil(mx/4)*4,avg=(st.per/n).toFixed(1).replace('.0','').replace('.',','),step=n==7?1:n==14?2:5;
+ const lab=(d,i)=>(n-1-i)%step==0?(n==7?d.toLocaleDateString('ru-RU',{weekday:'short'}):d.getDate()):'';
+ return `<div class="card"><div class="bar"><b>График активности</b><div class="seg">${[7,14,30].map(k=>`<button class="${CHP==k?'on':''}" data-a="chp" data-v="${k}">${k} дн.</button>`).join('')}</div></div>
+ <p class="mut" style="margin:10px 0 0">Задач сделано за ${n} ${pl(n,['день','дня','дней'])}: <b>${st.per}</b></p>
+ <div class="ch"><div class="cy"><span>${top}</span><span>${top/2}</span><span>0</span></div><div class="cp">${st.bars.map(([d,c],i)=>{const h=Math.round(c/top*100);return `<div class="cb${i==n-1?' td':''}" title="${d.toLocaleDateString('ru-RU')}: ${c}"><div class="bw">${c?`<em style="bottom:calc(${h}% + 3px)">${c}</em><i style="height:${h}%"></i>`:''}</div><span>${lab(d,i)}</span></div>`}).join('')}</div></div>
+ </div>`}
 const p4t=t=>{const sc=SJ[SUBJ].scale;for(let p=0;p<sc.length;p++)if(sc[p]>=t)return p;return CFG.max};
 const goalGet=()=>{const sc=SJ[SUBJ].scale,mx=sc?100:CFG.max;let v=GOALS[SUBJ];if(v==null){try{const q=localStorage.getItem('ege27goal2_'+SUBJ);if(q!==null)v=+q}catch(e){}}if(v==null)v=Math.round(mx*.75);return Math.max(0,Math.min(mx,v))};
 const goalSet=v=>{GOALS[SUBJ]=v;try{localStorage.setItem('ege27goal2_'+SUBJ,String(v))}catch(e){}clearTimeout(window._gs);const sj=SUBJ;window._gs=setTimeout(()=>{if(SH&&ME)sb.from('goals').upsert({user_id:ME,subject:sj,goal:v}).then(()=>{},()=>{})},500)};
@@ -301,7 +321,7 @@ home(){const vs=S.vars.filter(v=>(!v.own||v.own==ME)&&(v.subj||'math')==SUBJ).re
  ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:TUT?`<button class="btn big" data-a="go" data-v="${sbn()?'build':'bank'}">${sbn()?'Составить первый вариант':'Добавить первое задание'}</button>`:sbn()&&SUBJ!='math'?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}
  ${RESUME&&RESUME.v&&RESUME.v!='home'?`<button class="cont2" data-a="cont">Продолжить с места, где остановились</button>`:''}<div class="tiles">${tiles.map(([k,t,i,d])=>`<button class="tile" data-a="go" data-v="${k}">${ic(i)}<b>${t}</b><small>${d}</small></button>`).join('')}</div>
  <h2>Статистика</h2><div class="stats">${nums.map(([t,n])=>`<div class="stat"><b>${n}</b><small>${t}</small></div>`).join('')}</div>
- <div class="card"><div class="bar"><b>Активность</b><div class="seg">${[7,14,30].map(k=>`<button class="${CHP==k?'on':''}" data-a="chp" data-v="${k}">${k} дн.</button>`).join('')}</div></div><p class="mut" style="margin:10px 0 0">За ${CHP} ${pl(CHP,['день','дня','дней'])} сделано заданий: <b>${st.per}</b></p><div class="chart">${st.bars.map(([d,n],i)=>`<div title="${d.toLocaleDateString('ru-RU')}: ${n}"><i style="height:${Math.round(n/mx*100)}%"></i><span>${i%Math.ceil(CHP/7)==0?d.getDate():''}</span></div>`).join('')}</div></div>
+ ${chartHtml(st)}
  ${TUT?'':goalCard()}
  <h2>Варианты</h2>${vs.length?`<div class="card">${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
  <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT||v.own==ME?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')}</div>`:'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Начните решать.')+'</p>'}`},

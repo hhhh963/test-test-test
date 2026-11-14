@@ -245,7 +245,7 @@ function tstA(a){const v=S.vars.find(x=>x.id==a.vid);if(!v||!CFG.scale)return'';
 const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b>1&&b<5?f[1]:b==1?f[0]:f[2]};
 function dur(a,b){let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate(),h=b.getHours()-a.getHours(),mi=b.getMinutes()-a.getMinutes(),s=b.getSeconds()-a.getSeconds();
  if(s<0){s+=60;mi--}if(mi<0){mi+=60;h--}if(h<0){h+=24;d--}if(d<0){d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();m--}if(m<0){m+=12;y--}return{y,m,d,h,mi,s}}
-let CDO=false,CHP=14,FR=[],FRERR=false;
+let CDO=false,CHP=14,FR=[],FRERR=false,BCK=[],GOALS={};
 const CDT=new Date(2028,5,1,0,0,0);
 function cdTick(){const m=$('#cd-m');if(!m)return;const n=new Date();if(n>=CDT){m.textContent='Этот день настал';return}
  const o=dur(n,CDT);m.textContent=[o.y?o.y+' '+pl(o.y,['год','года','лет']):'',o.m?o.m+' '+pl(o.m,['месяц','месяца','месяцев']):'',o.d+' '+pl(o.d,['день','дня','дней'])].filter(Boolean).join(' ');
@@ -253,20 +253,28 @@ function cdTick(){const m=$('#cd-m');if(!m)return;const n=new Date();if(n>=CDT){
  const z=x=>String(x).padStart(2,'0');set('cd-y',o.y);set('cd-mo',o.m);set('cd-d',o.d);set('cd-h',z(o.h));set('cd-mi',z(o.mi));set('cd-s',z(o.s))}
 const cdCard=()=>`<div class="cd"><div class="cdl"><small>До 1 июня 2028</small><b id="cd-m">…</b><button class="cdb" id="cd-b" data-a="cdt">${CDO?'Скрыть':'Точнее?'}</button></div><div class="cdp ${CDO?'open':''}" id="cd-p"><div class="cdg">${[['y','лет'],['mo','мес'],['d','дней'],['h','часов'],['mi','минут'],['s','секунд']].map(([k,l])=>`<div class="cdt"><b id="cd-${k}">0</b><small>${l}</small></div>`).join('')}</div></div></div>`;
 function homeStats(n){const kd=d=>d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(),cnt=a=>Object.values(a.answers||{}).filter(v=>String(v||'').trim()).length;
- const at=S.att.filter(a=>vsub(a)==SUBJ&&(TUT?a.uid!=ME:true)),done=at.filter(a=>a.done).length,ans=at.reduce((q,a)=>q+cnt(a),0);
- const days=new Set(at.map(a=>kd(new Date(a.start))));let streak=0;const d=new Date();d.setHours(0,0,0,0);if(!days.has(kd(d)))d.setDate(d.getDate()-1);while(days.has(kd(d))){streak++;d.setDate(d.getDate()-1)}
- const bars=[];let per=0;for(let i=n-1;i>=0;i--){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-i);const c=at.filter(a=>kd(new Date(a.start))==kd(x)).reduce((q,a)=>q+cnt(a),0);per+=c;bars.push([x,c])}
+ const at=S.att.filter(a=>vsub(a)==SUBJ&&(TUT?a.uid!=ME:true)),done=at.filter(a=>a.done).length;
+ const bd={};(TUT?[]:BCK.filter(x=>x.s==SUBJ)).forEach(x=>{const k=kd(new Date(x.d));(bd[k]=bd[k]||new Set()).add(x.t)});
+ const ans=at.reduce((q,a)=>q+cnt(a),0)+Object.values(bd).reduce((q,x)=>q+x.size,0);
+ const days=new Set(at.map(a=>kd(new Date(a.start))));Object.keys(bd).forEach(k=>days.add(k));
+ let streak=0;const d=new Date();d.setHours(0,0,0,0);if(!days.has(kd(d)))d.setDate(d.getDate()-1);while(days.has(kd(d))){streak++;d.setDate(d.getDate()-1)}
+ const bars=[];let per=0;for(let i=n-1;i>=0;i--){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-i);const c=at.filter(a=>kd(new Date(a.start))==kd(x)).reduce((q,a)=>q+cnt(a),0)+(bd[kd(x)]?bd[kd(x)].size:0);per+=c;bars.push([x,c])}
  return{done,ans,streak,bars,per}}
-const goalGet=()=>{try{const v=localStorage.getItem('ege27goal_'+SUBJ);if(v!==null)return Math.min(CFG.max,+v||0)}catch(e){}return Math.round(CFG.max*.75)};
-const goalSet=v=>{try{localStorage.setItem('ege27goal_'+SUBJ,String(v))}catch(e){}};
+const p4t=t=>{const sc=SJ[SUBJ].scale;for(let p=0;p<sc.length;p++)if(sc[p]>=t)return p;return CFG.max};
+const goalGet=()=>{const sc=SJ[SUBJ].scale,mx=sc?100:CFG.max;let v=GOALS[SUBJ];if(v==null){try{const q=localStorage.getItem('ege27goal2_'+SUBJ);if(q!==null)v=+q}catch(e){}}if(v==null)v=Math.round(mx*.75);return Math.max(0,Math.min(mx,v))};
+const goalSet=v=>{GOALS[SUBJ]=v;try{localStorage.setItem('ege27goal2_'+SUBJ,String(v))}catch(e){}clearTimeout(window._gs);const sj=SUBJ;window._gs=setTimeout(()=>{if(SH&&ME)sb.from('goals').upsert({user_id:ME,subject:sj,goal:v}).then(()=>{},()=>{})},500)};
 function lastScore(){const l=S.att.filter(a=>a.done&&vsub(a)==SUBJ&&a.uid==ME).sort((x,y)=>(y.end||0)-(x.end||0))[0];if(!l)return null;
- if(TUT)return score(l).total;let q={};try{q=JSON.parse(localStorage.getItem('ege27sc')||'{}')}catch(e){}
- const p1=(q[l.id]||{}).p1;if(p1===undefined)return null;return p1+Object.values(l.self||{}).reduce((t,x)=>t+(+x||0),0)}
-function gUpd(g){const sc=SJ[SUBJ].scale,cur=lastScore();const a=$('#g-v'),b=$('#g-t'),m=$('#g-m');if(a)a.textContent=g;if(b)b.textContent=sc?' · ≈ '+sc[g]+' тестовых':'';if(m)m.style.width=(cur===null||!g?0:Math.min(100,Math.round(cur/g*100)))+'%'}
-function goalCard(){const g=goalGet(),sc=SJ[SUBJ].scale,cur=lastScore();
- return `<div class="card"><b>Моя цель</b><div class="goal"><span id="g-v">${g}</span><small>из ${CFG.max} первичных<span id="g-t">${sc?' · ≈ '+sc[g]+' тестовых':''}</span></small></div><input type="range" id="g-r" min="0" max="${CFG.max}" step="1" value="${g}">
- <div class="meter"><i id="g-m" style="width:${cur===null||!g?0:Math.min(100,Math.round(cur/g*100))}%"></i></div>
- <p class="mut" style="margin:10px 0 0">${cur===null?'Текущий: пока нет завершённых вариантов':`Текущий: <b>${cur}</b> из ${CFG.max} (последний вариант)`}</p></div>`}
+ if(TUT)return score(l).total;let p1=l.score1;if(p1==null){let q={};try{q=JSON.parse(localStorage.getItem('ege27sc')||'{}')}catch(e){}p1=(q[l.id]||{}).p1}
+ if(p1==null)return null;return p1+Object.values(l.self||{}).reduce((t,x)=>t+(+x||0),0)}
+function gUpd(g){const sc=SJ[SUBJ].scale,cur=lastScore(),a=$('#g-v'),b=$('#g-t'),m=$('#g-m');if(a)a.textContent=g;if(b)b.textContent=sc?'тестовых баллов · ≈ '+p4t(g)+' из '+CFG.max+' первичных':'из '+CFG.max+' первичных';const ct=cur===null?null:(sc?sc[cur]:cur);if(m)m.style.width=(ct===null||!g?0:Math.min(100,Math.round(ct/g*100)))+'%'}
+function goalCard(){const g=goalGet(),sc=SJ[SUBJ].scale,cur=lastScore(),ct=cur===null?null:(sc?sc[cur]:cur),mx=sc?100:CFG.max;
+ return `<div class="card"><b>Моя цель</b><div class="goal"><span id="g-v">${g}</span><small id="g-t">${sc?'тестовых баллов · ≈ '+p4t(g)+' из '+CFG.max+' первичных':'из '+CFG.max+' первичных'}</small></div><input type="range" id="g-r" min="0" max="${mx}" step="1" value="${g}">
+ <div class="meter"><i id="g-m" style="width:${ct===null||!g?0:Math.min(100,Math.round(ct/g*100))}%"></i></div>
+ <p class="mut" style="margin:10px 0 0">${cur===null?'Текущий: пока нет завершённых вариантов':sc?`Текущий: <b>${sc[cur]}</b> тестовых (${cur} из ${CFG.max} первичных, последний вариант)`:`Текущий: <b>${cur}</b> из ${CFG.max} первичных (последний вариант)`}</p></div>`}
+async function loadMine(){let ls=[];try{ls=JSON.parse(localStorage.getItem('ege27bck_'+ME)||'[]')}catch(e){}
+ let db=[];try{db=E(await sb.from('bank_checks').select('task_id,subject,ok,at')).map(r=>({t:r.task_id,s:r.subject,ok:r.ok,d:Date.parse(r.at)}))}catch(e){}
+ const seen=new Set(),all=[];[...db,...ls].forEach(x=>{const k=x.t+'|'+new Date(x.d).toDateString();if(!seen.has(k)){seen.add(k);all.push(x)}});BCK=all;
+ try{GOALS={};E(await sb.from('goals').select('subject,goal')).forEach(r=>GOALS[r.subject]=r.goal)}catch(e){}}
 let RESUME=null;try{RESUME=JSON.parse(localStorage.getItem('ege27pos')||'null')}catch(e){}
 function savePos(){if(!SH||V=='login')return;try{const a=C.aid?att():null;localStorage.setItem('ege27pos',JSON.stringify({v:V,s:SUBJ,y:scrollY,c:{aid:C.aid,tid:C.tid,vid:C.vid,lim:C.lim},ai:a?a.i:0,fl:V=='bank'&&$('#flt')?{n:$('#flt').value,q:($('#fq')||{}).value||''}:null}))}catch(e){}}
 addEventListener('pagehide',savePos);document.addEventListener('visibilitychange',()=>{if(document.hidden)savePos()});
@@ -421,10 +429,10 @@ async function pull(){
  const t=E(await sb.from('tasks').select(TUT?'*,task_answers(answer,solution)':'*'));
  S.bank=t.map(r=>{const a=[].concat(r.task_answers||[])[0]||{};return{id:r.id,n:r.n,subj:r.subject||'math',topic:r.topic||'',text:r.text,img:r.img||'',code:r.code||'',answer:a.answer||'',solution:a.solution||''}}).sort((x,y)=>x.n-y.n);
  S.vars=E(await sb.from('variants').select('*,variant_tasks(task_id,pos)')).map(r=>({id:r.id,name:r.name,mode:'exam',limit:r.limit_min,seed:1,own:r.owner||null,subj:r.subject||'math',ids:(r.variant_tasks||[]).sort((a,b)=>a.pos-b.pos).map(x=>x.task_id)}));
- S.att=E(await sb.from('attempts').select('*,scores(task_id,score)')).map(r=>{const s={};(r.scores||[]).forEach(x=>s[x.task_id]=x.score);return{id:r.id,vid:r.variant_id,uid:r.student_id,start:Date.parse(r.started_at),end:r.finished_at?Date.parse(r.finished_at):0,done:r.done,answers:r.answers||{},self:s,chk:{},i:0}});
+ S.att=E(await sb.from('attempts').select('*,scores(task_id,score)')).map(r=>{const s={};(r.scores||[]).forEach(x=>s[x.task_id]=x.score);return{id:r.id,vid:r.variant_id,uid:r.student_id,start:Date.parse(r.started_at),end:r.finished_at?Date.parse(r.finished_at):0,done:r.done,score1:r.score1,answers:r.answers||{},self:s,chk:{},i:0}});
  if(TUT){S.asg=E(await sb.from('assignments').select('*')).map(r=>({vid:r.variant_id,sid:r.student_id}));S.stu=E(await sb.from('profiles').select('id,name,role'));S.stu.forEach(p=>PN[p.id]=p.name)}
  SY={bank:{},vars:{},asg:{},sc:{},att:{}};S.vars.forEach(v=>DBV.add(v.id));S.bank.forEach(x=>SY.bank[x.id]=JSON.stringify(x));S.vars.forEach(x=>SY.vars[x.id]=JSON.stringify(x));S.asg.forEach(x=>SY.asg[x.vid+'|'+x.sid]=1);S.att.forEach(a=>{SY.sc[a.id]=JSON.stringify(a.self);SY.att[a.id]=JSON.stringify(a.answers)})}
-async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role,name').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');NAME=((p[0]&&p[0].name)||'').split('@')[0];SH=true;await pull();if(!TUT)await loadFriends();go('home')}
+async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role,name').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');NAME=((p[0]&&p[0].name)||'').split('@')[0];SH=true;await pull();if(!TUT){await loadFriends();await loadMine()}go('home')}
 (async()=>{try{if(E(await sb.auth.getSession()).session)await boot();else go('login')}catch(e){go('login')}})();
 /* ===== Рисование: панель в каждом задании; линии привязаны к странице и прокручиваются с ней ===== */
 (function(){
@@ -519,7 +527,9 @@ bchk:async id=>{const t=S.bank.find(x=>x.id==id),el=$('#ba-'+id),v=el?el.value:'
  catch(e){o.innerHTML='<p class="bad">Не удалось проверить: '+esc(e.message||e)+'</p>';b.textContent=lab;b.disabled=p1&&!v.trim();return}
  b.textContent=lab;b.disabled=p1&&!v.trim();box.classList.remove('okc','badc');BS[id]=res;if(res==1)box.classList.add('okc');if(res==2)box.classList.add('badc');
  BR[id]=res==1?'<p class="good">Верно</p>':res==2?'<p class="bad">Неверно</p>':(t.solution?'<div class="pv">'+fmt(t.solution)+'</div>':'<p class="mut">Решение не добавлено.</p>');
- o.innerHTML=BR[id];typeset()},
+ o.innerHTML=BR[id];
+ if(!TUT&&p1){const rec={t:id,s:(t.subj||'math'),ok:res==1,d:Date.now()};BCK.push(rec);try{const k='ege27bck_'+ME,l=JSON.parse(localStorage.getItem(k)||'[]');l.push(rec);localStorage.setItem(k,JSON.stringify(l.slice(-3000)))}catch(e){}sb.from('bank_checks').insert({user_id:ME,task_id:id,subject:rec.s,ok:rec.ok}).then(()=>{},()=>{})}
+ typeset()},
 cdt:()=>{CDO=!CDO;const p=$('#cd-p'),b=$('#cd-b');if(p)p.classList.toggle('open',CDO);if(b)b.textContent=CDO?'Скрыть':'Точнее?';cdTick()},
 fsearch:async()=>{const q=$('#fq2').value.trim();C.q=q;if(!q)return;const b=document.querySelector('[data-a="fsearch"]');b.disabled=true;b.textContent='Ищем…';try{C.res=E(await sb.rpc('search_users',{q}))}catch(e){C.res=[]}b.disabled=false;b.textContent='Найти';const r=$('#fres');if(r)r.innerHTML=frRes()},
 fadd:async id=>{try{const inc=FR.find(f=>f.uid==id&&f.status=='pending'&&f.incoming);if(inc)E(await sb.from('friendships').update({status:'accepted'}).eq('id',inc.rid));else E(await sb.from('friendships').insert({requester:ME,addressee:id}))}catch(e){note(e&&e.code=='23505'?'Заявка уже отправлена.':'Не удалось добавить друга. Попробуйте ещё раз.')}await loadFriends();render()},
@@ -543,7 +553,7 @@ start:id=>{const a={id:uid(),vid:id,uid:ME||'',start:Date.now(),answers:{},self:
 jump:i=>{if(window.dclr)dclr();att().i=+i;save();const h=C.hide;render();C.hide=h},
 hide:()=>{C.hide=!C.hide;render()},
 chk:id=>{att().chk[id]=1;save();render()},
-finish:async()=>{const a=att();if(a.fin)return;a.fin=1;if(SH&&!TUT){try{clearTimeout(tmr);while(SYNCING)await new Promise(q=>setTimeout(q,100));SYNCING=1;try{await doSync()}finally{SYNCING=0}const r=await sb.rpc('finish_attempt',{p_attempt:a.id});if(r.error)throw r.error;(r.data||[]).forEach(x=>{const t=S.bank.find(q=>q.id==x.task_id);if(t){t.answer=x.answer||'';t.solution=x.solution||''}})}catch(e){NW=true;NWM=((e&&e.message)||'').slice(0,140);mark()}}a.done=true;a.end=Date.now();if(!TUT){try{const q=JSON.parse(localStorage.getItem('ege27sc')||'{}');q[a.id]={p1:score(a).p1};localStorage.setItem('ege27sc',JSON.stringify(q))}catch(e){}}go('result',{aid:a.id})},
+finish:async()=>{const a=att();if(a.fin)return;a.fin=1;if(SH&&!TUT){try{clearTimeout(tmr);while(SYNCING)await new Promise(q=>setTimeout(q,100));SYNCING=1;try{await doSync()}finally{SYNCING=0}const r=await sb.rpc('finish_attempt',{p_attempt:a.id});if(r.error)throw r.error;(r.data||[]).forEach(x=>{const t=S.bank.find(q=>q.id==x.task_id);if(t){t.answer=x.answer||'';t.solution=x.solution||''}})}catch(e){NW=true;NWM=((e&&e.message)||'').slice(0,140);mark()}}a.done=true;a.end=Date.now();if(!TUT){try{const q=JSON.parse(localStorage.getItem('ege27sc')||'{}');q[a.id]={p1:score(a).p1};localStorage.setItem('ege27sc',JSON.stringify(q))}catch(e){}a.score1=score(a).p1;sb.rpc('save_result',{p_attempt:a.id,p_p1:a.score1}).then(()=>{},()=>{})}go('result',{aid:a.id})},
 delv:id=>{S.vars=S.vars.filter(v=>v.id!=id);save();render()},
 
 delt:id=>{const x=S.bank.find(t=>t.id==id);if(x&&x.img)idel(x.img);S.bank=S.bank.filter(t=>t.id!=id);save();render()},

@@ -154,6 +154,28 @@ html,body{overflow-x:clip}
 header{position:sticky;top:0;z-index:60;width:100%;max-width:none;margin:0;background:var(--bg);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px}
 header .hb{display:flex}
 }
+/* ===== Главная и друзья ===== */
+.hh{display:flex;justify-content:space-between;align-items:flex-start;gap:18px 28px;flex-wrap:wrap}
+.cd{margin-left:auto;text-align:right;min-width:240px;max-width:100%}
+.cd>small{display:block;color:var(--mut);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}
+.cd #cd-m{display:block;font-size:1.35rem;font-weight:700;letter-spacing:-.02em;margin:2px 0 8px;background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cdb{border-radius:99px;padding:6px 16px;min-height:34px;font-size:.88rem;background:var(--accs);color:var(--acc);border:0}
+.cdp{max-height:0;opacity:0;overflow:hidden;margin-top:0;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .35s,margin .35s}
+.cdp.open{max-height:280px;opacity:1;margin-top:14px}
+.cdg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:2px}
+.cdt{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 6px;text-align:center;box-shadow:var(--sh)}
+.cdt b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.cdt small{font-size:.68rem;color:var(--mut)}
+.tk{animation:tk .35s ease}@keyframes tk{0%{transform:translateY(-6px);opacity:.3}100%{transform:none;opacity:1}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:18px 0}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--line);box-shadow:var(--sh);min-height:112px;transition:transform .15s,border-color .15s}
+.tile:hover{transform:translateY(-2px);border-color:var(--acc);background:var(--card)}
+.tile svg{color:var(--acc);margin-bottom:6px}.tile b{font-weight:600}.tile small{color:var(--mut);font-size:.82rem;line-height:1.3}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--sh)}.stat b{display:block;font-size:1.8rem;letter-spacing:-.03em}.stat small{color:var(--mut)}
+.chart{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:12px}.chart>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.chart i{display:block;width:100%;min-height:3px;border-radius:6px;background:var(--g)}.chart span{font-size:.68rem;color:var(--mut)}
+.av{width:38px;height:38px;flex:0 0 38px;border-radius:50%;background:var(--g);color:var(--on);display:flex;align-items:center;justify-content:center;font-weight:700}
+@media (max-width:700px){.cd{width:100%;text-align:left;margin-left:0}}
 </style></head><body><div id="app"></div>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -190,26 +212,58 @@ setSubj(SUBJ);
 const sbn=()=>S.bank.filter(t=>(t.subj||'math')==SUBJ).length,vsub=a=>{const v=S.vars.find(x=>x.id==a.vid);return v?(v.subj||'math'):'math'};
 let SBO=(()=>{if(innerWidth<=700)return false;try{const v=localStorage.getItem('ege27sb');if(v!==null)return v=='1'}catch(e){}return true})();
 const IC2={menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',book:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19a2 2 0 012-2h13"/>',scale:'<path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/>',build:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6M16 5a3 3 0 010 6M18 14c2 .6 3 2.4 3 5"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',moon:'<path d="M20 14A8 8 0 019.5 4 8 8 0 1020 14z"/>',out:'<path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9"/>',chart:'<path d="M5 20V11M12 20V4M19 20v-6"/>'};
+IC2.heart='<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/>';
 IC2.sigma='<path d="M17 5H7l6 7-6 7h10"/>';IC2.aa='<path d="M3 19l5-12 5 12M5 15h6M15 19v-6a2 2 0 014 0v6M15 16h4"/>';
 const ic=k=>`<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${IC2[k]}</svg>`;
 function tstA(a){const v=S.vars.find(x=>x.id==a.vid);if(!v||!CFG.scale)return'';const mx=vt(v).reduce((q,t)=>q+M[t.n-1],0),n=score(a).total;return mx==CFG.max&&CFG.scale[n]!=null?'Примерный тестовый балл: '+CFG.scale[n]+' (по прогнозу шкалы)':''}
-function go(v,c){if(innerWidth<=700)SBO=false;if(!TUT&&!['home','solve','result','bank','build','one','scale'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
+/* ===== Главная: таймер, статистика; друзья ===== */
+const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b>1&&b<5?f[1]:b==1?f[0]:f[2]};
+function dur(a,b){let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate(),h=b.getHours()-a.getHours(),mi=b.getMinutes()-a.getMinutes(),s=b.getSeconds()-a.getSeconds();
+ if(s<0){s+=60;mi--}if(mi<0){mi+=60;h--}if(h<0){h+=24;d--}if(d<0){d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();m--}if(m<0){m+=12;y--}return{y,m,d,h,mi,s}}
+let CDO=false,FR=[],FRERR=false;
+const CDT=new Date(2028,5,1,0,0,0);
+function cdTick(){const m=$('#cd-m');if(!m)return;const n=new Date();if(n>=CDT){m.textContent='Этот день настал';return}
+ const o=dur(n,CDT);m.textContent=[o.y?o.y+' '+pl(o.y,['год','года','лет']):'',o.m?o.m+' '+pl(o.m,['месяц','месяца','месяцев']):'',o.d+' '+pl(o.d,['день','дня','дней'])].filter(Boolean).join(' ');
+ const set=(id,v)=>{const e=$('#'+id);if(e&&e.textContent!=String(v)){e.textContent=v;e.classList.remove('tk');void e.offsetWidth;e.classList.add('tk')}};
+ const z=x=>String(x).padStart(2,'0');set('cd-y',o.y);set('cd-mo',o.m);set('cd-d',o.d);set('cd-h',z(o.h));set('cd-mi',z(o.mi));set('cd-s',z(o.s))}
+const cdCard=()=>`<div class="cd"><small>До 1 июня 2028</small><b id="cd-m">…</b><button class="cdb" id="cd-b" data-a="cdt">${CDO?'Скрыть':'Точнее?'}</button><div class="cdp ${CDO?'open':''}" id="cd-p"><div class="cdg">${[['y','лет'],['mo','мес'],['d','дней'],['h','часов'],['mi','минут'],['s','секунд']].map(([k,l])=>`<div class="cdt"><b id="cd-${k}">0</b><small>${l}</small></div>`).join('')}</div></div></div>`;
+function homeStats(){const kd=d=>d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate();
+ const at=S.att.filter(a=>vsub(a)==SUBJ&&(TUT?a.uid!=ME:true)),done=at.filter(a=>a.done).length;
+ const ans=at.reduce((q,a)=>q+Object.values(a.answers||{}).filter(v=>String(v||'').trim()).length,0);
+ const days=new Set(at.map(a=>kd(new Date(a.start))));let streak=0;const d=new Date();d.setHours(0,0,0,0);if(!days.has(kd(d)))d.setDate(d.getDate()-1);while(days.has(kd(d))){streak++;d.setDate(d.getDate()-1)}
+ const bars=[];for(let i=13;i>=0;i--){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-i);bars.push([x,at.filter(a=>kd(new Date(a.start))==kd(x)).length])}
+ return{done,ans,streak,bars}}
+async function loadFriends(){try{FR=E(await sb.rpc('my_friends'));FRERR=false}catch(e){FR=[];FRERR=true}}
+function frRes(){if(C.res===undefined)return'';if(!C.res.length)return'<p class="mut" style="margin:14px 0 0">Никого не нашли. Проверьте, как имя написано при регистрации.</p>';
+ return'<div style="margin-top:12px">'+C.res.map(u=>{const f=FR.find(x=>x.uid==u.id);const btn=!f?`<button class="btn" data-a="fadd" data-v="${u.id}">Добавить</button>`:f.status=='accepted'?'<span class="mut">Уже в друзьях</span>':f.incoming?`<button class="btn" data-a="fadd" data-v="${u.id}">Принять</button>`:'<span class="mut">Заявка отправлена</span>';
+ return`<div class="it"><div style="display:flex;align-items:center;gap:12px"><span class="av">${esc((u.name||'?')[0].toUpperCase())}</span><b>${esc(u.name)}</b></div>${btn}</div>`}).join('')+'</div>'}
+function go(v,c){if(innerWidth<=700)SBO=false;if(!TUT&&!['home','solve','result','bank','build','one','scale','friends'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
 function render(){clearInterval(tm);if(V=='login'){document.body.classList.add('lg');$('#app').innerHTML='<main>'+VIEWS.login()+'</main>';if(window.dfb)dfb();return}
- const tabs=[['home','Главная','home'],['bank','Банк заданий','book'],['build','Конструктор','build']].concat(SJ[SUBJ].scale?[['scale','Шкала перевода баллов ЕГЭ','scale']]:[]).concat(SH&&TUT?[['res','Ученики','users']]:[]);
+ const tabs=[['home','Главная','home'],['bank','Банк заданий','book'],['build','Конструктор','build']].concat(SJ[SUBJ].scale?[['scale','Шкала перевода баллов ЕГЭ','scale']]:[]).concat(SH&&!TUT?[['friends','Друзья','heart']]:[]).concat(SH&&TUT?[['res','Ученики','users']]:[]);
  $('#app').innerHTML=`<aside id="sb" class="noprint ${SBO?'open':''}"><button class="sbi sbt" data-a="sbt" title="Свернуть или развернуть меню" aria-label="Меню">${ic('menu')}<span class="lb">Меню</span></button><div class="sbg">${Object.keys(SJ).map(k=>`<button class="sbi sj ${SUBJ==k?'on':''}" data-a="subj" data-v="${k}" title="${SJ[k].name}">${ic(SJ[k].icon)}<span class="lb">${SJ[k].short}</span></button>`).join('')}</div>${tabs.map(([k,l,i])=>`<button class="sbi ${V==k?'on':''}" data-a="go" data-v="${k}" title="${l}">${ic(i)}<span class="lb">${l}</span></button>`).join('')}<div class="sbf"><button class="sbi" data-a="theme" title="Сменить тему">${ic(theme()=='dark'?'sun':'moon')}<span class="lb">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</span></button>${SH?`<button class="sbi" data-a="out" title="Выйти">${ic('out')}<span class="lb">Выйти</span></button>`:''}</div></aside><div id="sbm" class="noprint ${SBO?'open':''}" data-a="sbt"></div><header class="noprint"><button class="hb" data-a="sbt" aria-label="Меню">${ic('menu')}</button><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span></header><main>${VIEWS[V]()}</main>`;
- document.body.classList.toggle('sbo',SBO);document.body.classList.remove('lg');if(V=='solve'){tick();tm=setInterval(tick,1000)}
- if(V=='bank')fillList();hydrate();if(window.dfb)dfb();if(V=='build')bsum();
+ document.body.classList.toggle('sbo',SBO);document.body.classList.remove('lg');if(V=='solve'){tick();tm=setInterval(tick,1000)}else if(V=='home'){cdTick();tm=setInterval(cdTick,1000)}
+ if(V=='bank')fillList();hydrate();if(window.dfb)dfb();if(V=='build')bsum();if(V=='friends'&&!C.fl){C.fl=1;loadFriends().then(()=>{if(V=='friends')render()})}
  typeset()}
 function tick(){const a=att();if(!a)return;const v=S.vars.find(x=>x.id==a.vid),el=$('#tm');if(!el||!v.limit)return;
  const r=v.limit*60-Math.floor((Date.now()-a.start)/1000);if(r<=0){A.finish();return}el.textContent=C.hide?'скрыт':fT(r)}
 
 const VIEWS={
-home(){const a=S.att.filter(x=>!x.done&&vsub(x)==SUBJ).slice(-1)[0],vs=S.vars.filter(v=>(!v.own||v.own==ME)&&(v.subj||'math')==SUBJ).reverse();
- return `<h1>Здравствуйте${NAME?', '+esc(NAME):''}</h1><p class="mut">${SJ[SUBJ].name} · ${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p>
- ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:`${TUT?`<button class="btn big" data-a="go" data-v="${sbn()?'build':'bank'}">${sbn()?'Составить первый вариант':'Добавить первое задание'}</button>`:sbn()?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}`}
- <h2>Варианты</h2>${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
- <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT||v.own==ME?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')||'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Начните решать.')+'</p>'}`},
-
+home(){const vs=S.vars.filter(v=>(!v.own||v.own==ME)&&(v.subj||'math')==SUBJ).reverse(),a=S.att.filter(x=>!x.done&&vsub(x)==SUBJ).slice(-1)[0],st=homeStats(),mx=Math.max(1,...st.bars.map(b=>b[1]));
+ const tiles=[['bank','Банк заданий','book','Решайте задания по номерам'],['build','Конструктор','build','Соберите свой вариант']].concat(SJ[SUBJ].scale?[['scale','Шкала баллов','chart','Первичные в тестовые']]:[]).concat(TUT?(SH?[['res','Ученики','users','Результаты работ']]:[]):[['friends','Друзья','heart','Добавляйте по имени']]);
+ const nums=TUT?[['Учеников',S.stu.filter(p=>p.role=='student').length],['Работ завершено',st.done],['Заданий в банке',sbn()],['Вариантов',vs.length]]:[['Работ завершено',st.done],['Заданий отвечено',st.ans],['Дней подряд',st.streak],['Друзей',FR.filter(f=>f.status=='accepted').length]];
+ return `<div class="hh"><div><h1>Здравствуйте${NAME?', '+esc(NAME):''}</h1><p class="mut">${SJ[SUBJ].name} · ${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p></div>${cdCard()}</div>
+ ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:TUT?`<button class="btn big" data-a="go" data-v="${sbn()?'build':'bank'}">${sbn()?'Составить первый вариант':'Добавить первое задание'}</button>`:sbn()?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}
+ <div class="tiles">${tiles.map(([k,t,i,d])=>`<button class="tile" data-a="go" data-v="${k}">${ic(i)}<b>${t}</b><small>${d}</small></button>`).join('')}</div>
+ <h2>Статистика</h2><div class="stats">${nums.map(([t,n])=>`<div class="stat"><b>${n}</b><small>${t}</small></div>`).join('')}</div>
+ <div class="card"><b>Активность за 14 дней</b><div class="chart">${st.bars.map(([d,n])=>`<div title="${d.toLocaleDateString('ru-RU')}: ${n}"><i style="height:${Math.round(n/mx*100)}%"></i><span>${d.getDate()}</span></div>`).join('')}</div></div>
+ <h2>Варианты</h2>${vs.length?`<div class="card">${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
+ <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT||v.own==ME?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')}</div>`:'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Начните решать.')+'</p>'}`},
+friends(){const inc=FR.filter(f=>f.status=='pending'&&f.incoming),out=FR.filter(f=>f.status=='pending'&&!f.incoming),fr=FR.filter(f=>f.status=='accepted'),av=n=>`<span class="av">${esc((n||'?')[0].toUpperCase())}</span>`;
+ return `<h1>Друзья</h1><p class="mut">Найдите друга по имени, которое он указал при регистрации.</p>${FRERR?'<p class="bad">Друзья пока недоступны: в базе не выполнен SQL-скрипт. Обратитесь к репетитору.</p>':''}
+ <div class="card"><div class="row"><label style="margin:0;flex:2 1 220px">Имя друга<input id="fq2" value="${esc(C.q||'')}" placeholder="Например, Анна"></label><button class="btn" data-a="fsearch" style="flex:0 0 auto">Найти</button></div><div id="fres">${frRes()}</div></div>
+ ${inc.length?`<h2>Заявки в друзья</h2><div class="card">${inc.map(f=>`<div class="it"><div style="display:flex;align-items:center;gap:12px">${av(f.name)}<b>${esc(f.name)}</b></div><div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="facc" data-v="${f.rid}">Принять</button><button data-a="fdel" data-v="${f.rid}">Отклонить</button></div></div>`).join('')}</div>`:''}
+ <h2>Мои друзья · ${fr.length}</h2><div class="card">${fr.map(f=>`<div class="it"><div style="display:flex;align-items:center;gap:12px">${av(f.name)}<b>${esc(f.name)}</b></div><button data-a="fdel" data-v="${f.rid}">Удалить</button></div>`).join('')||'<span class="mut">Пока никого. Найдите первого друга по имени.</span>'}</div>
+ ${out.length?`<h2>Отправленные заявки</h2><div class="card">${out.map(f=>`<div class="it"><div style="display:flex;align-items:center;gap:12px">${av(f.name)}<b>${esc(f.name)}</b></div><button data-a="fdel" data-v="${f.rid}">Отменить</button></div>`).join('')}</div>`:''}`},
 bank(){if(!TUT)return `<h1>Банк заданий</h1><p class="mut">Выберите задание и решите его сами: введите ответ и нажмите «Проверить».</p><div class="row"><label>Номер<select id="flt">${nOpts(0,1)}</select></label><label>Поиск<input id="fq" placeholder="текст или код"></label></div><div id="lst"></div>`;const f=C.f||{n:1,topic:T[0],diff:'П'},e=C.e||{};
  return `<h1>Банк заданий</h1><p class="mut">В банке: ${sbn()}. ${C.msg?`<span class="bad">${esc(C.msg)}</span>`:''}</p>
  <div class="card"><h2 style="margin-top:0">${C.eid?'Редактирование задания':'Новое задание'}</h2>
@@ -331,7 +385,7 @@ async function pull(){
  S.att=E(await sb.from('attempts').select('*,scores(task_id,score)')).map(r=>{const s={};(r.scores||[]).forEach(x=>s[x.task_id]=x.score);return{id:r.id,vid:r.variant_id,uid:r.student_id,start:Date.parse(r.started_at),end:r.finished_at?Date.parse(r.finished_at):0,done:r.done,answers:r.answers||{},self:s,chk:{},i:0}});
  if(TUT){S.asg=E(await sb.from('assignments').select('*')).map(r=>({vid:r.variant_id,sid:r.student_id}));S.stu=E(await sb.from('profiles').select('id,name,role'));S.stu.forEach(p=>PN[p.id]=p.name)}
  SY={bank:{},vars:{},asg:{},sc:{},att:{}};S.vars.forEach(v=>DBV.add(v.id));S.bank.forEach(x=>SY.bank[x.id]=JSON.stringify(x));S.vars.forEach(x=>SY.vars[x.id]=JSON.stringify(x));S.asg.forEach(x=>SY.asg[x.vid+'|'+x.sid]=1);S.att.forEach(a=>{SY.sc[a.id]=JSON.stringify(a.self);SY.att[a.id]=JSON.stringify(a.answers)})}
-async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role,name').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');NAME=((p[0]&&p[0].name)||'').split('@')[0];SH=true;await pull();go('home')}
+async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role,name').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');NAME=((p[0]&&p[0].name)||'').split('@')[0];SH=true;await pull();if(!TUT)await loadFriends();go('home')}
 (async()=>{try{if(E(await sb.auth.getSession()).session)await boot();else go('login')}catch(e){go('login')}})();
 /* ===== Рисование: панель в каждом задании; линии привязаны к странице и прокручиваются с ней ===== */
 (function(){
@@ -427,6 +481,11 @@ bchk:async id=>{const t=S.bank.find(x=>x.id==id),el=$('#ba-'+id),v=el?el.value:'
  b.textContent=lab;b.disabled=p1&&!v.trim();box.classList.remove('okc','badc');BS[id]=res;if(res==1)box.classList.add('okc');if(res==2)box.classList.add('badc');
  BR[id]=res==1?'<p class="good">Верно</p>':res==2?'<p class="bad">Неверно</p>':(t.solution?'<div class="pv">'+fmt(t.solution)+'</div>':'<p class="mut">Решение не добавлено.</p>');
  o.innerHTML=BR[id];typeset()},
+cdt:()=>{CDO=!CDO;const p=$('#cd-p'),b=$('#cd-b');if(p)p.classList.toggle('open',CDO);if(b)b.textContent=CDO?'Скрыть':'Точнее?';cdTick()},
+fsearch:async()=>{const q=$('#fq2').value.trim();C.q=q;if(!q)return;const b=document.querySelector('[data-a="fsearch"]');b.disabled=true;b.textContent='Ищем…';try{C.res=E(await sb.rpc('search_users',{q}))}catch(e){C.res=[]}b.disabled=false;b.textContent='Найти';const r=$('#fres');if(r)r.innerHTML=frRes()},
+fadd:async id=>{try{const inc=FR.find(f=>f.uid==id&&f.status=='pending'&&f.incoming);if(inc)E(await sb.from('friendships').update({status:'accepted'}).eq('id',inc.rid));else E(await sb.from('friendships').insert({requester:ME,addressee:id}))}catch(e){note(e&&e.code=='23505'?'Заявка уже отправлена.':'Не удалось добавить друга. Попробуйте ещё раз.')}await loadFriends();render()},
+facc:async id=>{try{E(await sb.from('friendships').update({status:'accepted'}).eq('id',id))}catch(e){note('Не удалось принять заявку.')}await loadFriends();render()},
+fdel:async id=>{try{E(await sb.from('friendships').delete().eq('id',id))}catch(e){note('Не удалось выполнить действие.')}await loadFriends();render()},
 open:id=>go('result',{aid:id}),
 migr:async()=>{MIG=1;for(const t of LEG.bank){if(S.bank.some(x=>x.id==t.id))continue;const n=Object.assign({},t);if(t.img&&t.img.indexOf('a:')!==0&&AS){try{const b=await iget(t.img);if(b){const r=await AS.upload(b);n.img='a:'+r.id}}catch(e){}}S.bank.push(n)}save();go('bank',{msg:'Задания перенесены в общий банк.'})},
 rmimg:()=>{if(C.img&&C.img!=C.orig)idel(C.img);C.img=null;$('#imgbox').innerHTML=''},

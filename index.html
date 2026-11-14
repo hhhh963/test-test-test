@@ -298,14 +298,14 @@ let SH=false,TUT=true,NW=false,MIG=0,LEG=null,ME=null,NAME='',PN={},tmr=null,SY=
 S={bank:[],vars:[],att:[],asg:[],stu:[]};V='login';C={load:1};
 const stat=()=>!SH?'':NW?'Ошибка сохранения'+(NWM?' ('+NWM+')':'')+'. Проверьте соединение и права доступа':'';
 const mark=()=>{const e=$('#st');if(e)e.textContent=stat()},E=r=>{if(r.error)throw r.error;return r.data};
-let SYNCING=0,AGAIN=0,RET=0,NWM='';
+let SYNCING=0,AGAIN=0,RET=0,NWM='';const DBV=new Set();
 async function runSync(){if(SYNCING){AGAIN=1;return}SYNCING=1;
  try{do{AGAIN=0;await doSync()}while(AGAIN);NW=false;RET=0;mark()}
  catch(e){console.error(e);NW=true;NWM=((e&&(e.message||e.details))||'').slice(0,140);mark();if(!TUT){SY.att={};S.vars.forEach(v=>{if(v.own==ME)delete SY.vars[v.id]})}if(RET++<2)setTimeout(sync,3000)}
  finally{SYNCING=0}}
 function sync(){if(!SH)return;clearTimeout(tmr);tmr=setTimeout(runSync,400)}
 async function doSync(){
- if(!TUT){for(const v of S.vars)if(v.own==ME){const j=JSON.stringify(v);if(SY.vars[v.id]!==j){SY.vars[v.id]=j;E(await sb.from('variants').upsert(SU({id:v.id,name:v.name,limit_min:v.limit,owner:ME},v.subj,HASSUBV)));E(await sb.from('variant_tasks').delete().eq('variant_id',v.id));if(v.ids.length)E(await sb.from('variant_tasks').insert(v.ids.map((t,i)=>({variant_id:v.id,task_id:t,pos:i}))))}}for(const id in SY.vars)if(!S.vars.some(x=>x.id==id)){delete SY.vars[id];E(await sb.from('variants').delete().eq('id',id))}}
+ if(!TUT){for(const v of S.vars)if(v.own==ME){const j=JSON.stringify(v);if(SY.vars[v.id]!==j){SY.vars[v.id]=j;if(DBV.has(v.id))E(await sb.from('variants').update({name:v.name,limit_min:v.limit}).eq('id',v.id));else{E(await sb.from('variants').insert(SU({id:v.id,name:v.name,limit_min:v.limit,owner:ME},v.subj,HASSUBV)));DBV.add(v.id)}E(await sb.from('variant_tasks').delete().eq('variant_id',v.id));if(v.ids.length)E(await sb.from('variant_tasks').insert(v.ids.map((t,i)=>({variant_id:v.id,task_id:t,pos:i}))))}}for(const id in SY.vars)if(!S.vars.some(x=>x.id==id)){delete SY.vars[id];E(await sb.from('variants').delete().eq('id',id))}}
  if(TUT){
   for(const x of S.bank){const j=JSON.stringify(x);if(SY.bank[x.id]!==j){SY.bank[x.id]=j;E(await sb.from('tasks').upsert(SU({id:x.id,n:x.n,topic:x.topic,text:x.text,img:x.img||null,code:x.code||null},x.subj,HASSUB)));E(await sb.from('task_answers').upsert({task_id:x.id,answer:x.answer,solution:x.solution}))}}
   for(const id in SY.bank)if(!S.bank.some(x=>x.id==id)){delete SY.bank[id];E(await sb.from('tasks').delete().eq('id',id))}
@@ -322,7 +322,7 @@ async function pull(){
  S.vars=E(await sb.from('variants').select('*,variant_tasks(task_id,pos)')).map(r=>({id:r.id,name:r.name,mode:'exam',limit:r.limit_min,seed:1,own:r.owner||null,subj:r.subject||'math',ids:(r.variant_tasks||[]).sort((a,b)=>a.pos-b.pos).map(x=>x.task_id)}));
  S.att=E(await sb.from('attempts').select('*,scores(task_id,score)')).map(r=>{const s={};(r.scores||[]).forEach(x=>s[x.task_id]=x.score);return{id:r.id,vid:r.variant_id,uid:r.student_id,start:Date.parse(r.started_at),end:r.finished_at?Date.parse(r.finished_at):0,done:r.done,answers:r.answers||{},self:s,chk:{},i:0}});
  if(TUT){S.asg=E(await sb.from('assignments').select('*')).map(r=>({vid:r.variant_id,sid:r.student_id}));S.stu=E(await sb.from('profiles').select('id,name,role'));S.stu.forEach(p=>PN[p.id]=p.name)}
- SY={bank:{},vars:{},asg:{},sc:{},att:{}};S.bank.forEach(x=>SY.bank[x.id]=JSON.stringify(x));S.vars.forEach(x=>SY.vars[x.id]=JSON.stringify(x));S.asg.forEach(x=>SY.asg[x.vid+'|'+x.sid]=1);S.att.forEach(a=>{SY.sc[a.id]=JSON.stringify(a.self);SY.att[a.id]=JSON.stringify(a.answers)})}
+ SY={bank:{},vars:{},asg:{},sc:{},att:{}};S.vars.forEach(v=>DBV.add(v.id));S.bank.forEach(x=>SY.bank[x.id]=JSON.stringify(x));S.vars.forEach(x=>SY.vars[x.id]=JSON.stringify(x));S.asg.forEach(x=>SY.asg[x.vid+'|'+x.sid]=1);S.att.forEach(a=>{SY.sc[a.id]=JSON.stringify(a.self);SY.att[a.id]=JSON.stringify(a.answers)})}
 async function boot(){const u=E(await sb.auth.getUser()).user;ME=u.id;const p=E(await sb.from('profiles').select('role,name').eq('id',ME));TUT=!!(p[0]&&p[0].role=='tutor');NAME=((p[0]&&p[0].name)||'').split('@')[0];SH=true;await pull();go('home')}
 (async()=>{try{if(E(await sb.auth.getSession()).session)await boot();else go('login')}catch(e){go('login')}})();
 /* ===== Рисование: панель в каждом задании; линии привязаны к странице и прокручиваются с ней ===== */

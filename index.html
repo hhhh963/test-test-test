@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ЕГЭ 2027 · Профильная математика</title>
+<title>ЕГЭ 2028</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -176,6 +176,30 @@ header .hb{display:flex}
 .chart i{display:block;width:100%;min-height:3px;border-radius:6px;background:var(--g)}.chart span{font-size:.68rem;color:var(--mut)}
 .av{width:38px;height:38px;flex:0 0 38px;border-radius:50%;background:var(--g);color:var(--on);display:flex;align-items:center;justify-content:center;font-weight:700}
 @media (max-width:700px){.cd{width:100%;text-align:left;margin-left:0}}
+/* ===== Правки: размеры, таймер, цель, имя ===== */
+@media (min-width:1000px){html{font-size:17.5px}main,header{max-width:960px}}
+body{font-size:1rem}
+header b{background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+#sb{overflow-y:auto;overflow-x:hidden}
+.sbi.cont{background:var(--accs);color:var(--acc);height:auto;min-height:46px;padding-top:8px;padding-bottom:8px}
+.cdl{text-align:right}
+.cdl>small{display:block;color:var(--mut);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}
+@media (min-width:701px){
+.hh{position:relative;min-height:118px}
+.cd{position:absolute;top:0;right:0;margin:0;min-width:0;z-index:20}
+.cdp{position:absolute;right:0;top:calc(100% + 10px);max-height:none;margin:0;width:max-content;opacity:0;pointer-events:none;clip-path:inset(0 100% 0 0 round 18px);transform:translateX(-14px);transition:clip-path .5s cubic-bezier(.4,0,.2,1),opacity .3s,transform .5s cubic-bezier(.4,0,.2,1)}
+.cdp.open{margin:0;opacity:1;pointer-events:auto;clip-path:inset(0 0 0 0 round 18px);transform:none}
+.cdg{display:flex;gap:8px;padding:10px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px -20px rgba(20,30,70,.35)}
+.cdt{min-width:80px;box-shadow:none;border:0;background:var(--accs)}
+}
+@media (max-width:700px){.cdl{text-align:left}header{background:color-mix(in srgb,var(--accs) 72%,var(--bg));-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}}
+.gr{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px}
+.rnb{border-radius:99px;padding:6px 14px;min-height:34px;font-size:.85rem;background:var(--accs);color:var(--acc);border:0}
+.cont2{display:block;width:100%;margin:10px 0 0;border-radius:16px;padding:14px;background:var(--accs);color:var(--acc);border:0;font-weight:500}
+.goal{display:flex;align-items:baseline;gap:10px;margin:8px 0 4px}.goal #g-v{font-size:2.2rem;font-weight:700;letter-spacing:-.03em}.goal small{color:var(--mut)}
+input[type=range]{padding:0;border:0;background:none;box-shadow:none;accent-color:var(--acc);height:30px;margin:4px 0 8px}
+#md{animation:mf .22s ease}#md .mb{animation:mp .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes mf{from{opacity:0}to{opacity:1}}@keyframes mp{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
 </style></head><body><div id="app"></div>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -213,6 +237,7 @@ const sbn=()=>S.bank.filter(t=>(t.subj||'math')==SUBJ).length,vsub=a=>{const v=S
 let SBO=(()=>{if(innerWidth<=700)return false;try{const v=localStorage.getItem('ege27sb');if(v!==null)return v=='1'}catch(e){}return true})();
 const IC2={menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',book:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19a2 2 0 012-2h13"/>',scale:'<path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/>',build:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6M16 5a3 3 0 010 6M18 14c2 .6 3 2.4 3 5"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',moon:'<path d="M20 14A8 8 0 019.5 4 8 8 0 1020 14z"/>',out:'<path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9"/>',chart:'<path d="M5 20V11M12 20V4M19 20v-6"/>'};
 IC2.heart='<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/>';
+IC2.resume='<path d="M6 4l13 8-13 8z"/>';
 IC2.sigma='<path d="M17 5H7l6 7-6 7h10"/>';IC2.aa='<path d="M3 19l5-12 5 12M5 15h6M15 19v-6a2 2 0 014 0v6M15 16h4"/>';
 const ic=k=>`<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${IC2[k]}</svg>`;
 function tstA(a){const v=S.vars.find(x=>x.id==a.vid);if(!v||!CFG.scale)return'';const mx=vt(v).reduce((q,t)=>q+M[t.n-1],0),n=score(a).total;return mx==CFG.max&&CFG.scale[n]!=null?'Примерный тестовый балл: '+CFG.scale[n]+' (по прогнозу шкалы)':''}
@@ -220,19 +245,32 @@ function tstA(a){const v=S.vars.find(x=>x.id==a.vid);if(!v||!CFG.scale)return'';
 const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b>1&&b<5?f[1]:b==1?f[0]:f[2]};
 function dur(a,b){let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate(),h=b.getHours()-a.getHours(),mi=b.getMinutes()-a.getMinutes(),s=b.getSeconds()-a.getSeconds();
  if(s<0){s+=60;mi--}if(mi<0){mi+=60;h--}if(h<0){h+=24;d--}if(d<0){d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();m--}if(m<0){m+=12;y--}return{y,m,d,h,mi,s}}
-let CDO=false,FR=[],FRERR=false;
+let CDO=false,CHP=14,FR=[],FRERR=false;
 const CDT=new Date(2028,5,1,0,0,0);
 function cdTick(){const m=$('#cd-m');if(!m)return;const n=new Date();if(n>=CDT){m.textContent='Этот день настал';return}
  const o=dur(n,CDT);m.textContent=[o.y?o.y+' '+pl(o.y,['год','года','лет']):'',o.m?o.m+' '+pl(o.m,['месяц','месяца','месяцев']):'',o.d+' '+pl(o.d,['день','дня','дней'])].filter(Boolean).join(' ');
  const set=(id,v)=>{const e=$('#'+id);if(e&&e.textContent!=String(v)){e.textContent=v;e.classList.remove('tk');void e.offsetWidth;e.classList.add('tk')}};
  const z=x=>String(x).padStart(2,'0');set('cd-y',o.y);set('cd-mo',o.m);set('cd-d',o.d);set('cd-h',z(o.h));set('cd-mi',z(o.mi));set('cd-s',z(o.s))}
-const cdCard=()=>`<div class="cd"><small>До 1 июня 2028</small><b id="cd-m">…</b><button class="cdb" id="cd-b" data-a="cdt">${CDO?'Скрыть':'Точнее?'}</button><div class="cdp ${CDO?'open':''}" id="cd-p"><div class="cdg">${[['y','лет'],['mo','мес'],['d','дней'],['h','часов'],['mi','минут'],['s','секунд']].map(([k,l])=>`<div class="cdt"><b id="cd-${k}">0</b><small>${l}</small></div>`).join('')}</div></div></div>`;
-function homeStats(){const kd=d=>d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate();
- const at=S.att.filter(a=>vsub(a)==SUBJ&&(TUT?a.uid!=ME:true)),done=at.filter(a=>a.done).length;
- const ans=at.reduce((q,a)=>q+Object.values(a.answers||{}).filter(v=>String(v||'').trim()).length,0);
+const cdCard=()=>`<div class="cd"><div class="cdl"><small>До 1 июня 2028</small><b id="cd-m">…</b><button class="cdb" id="cd-b" data-a="cdt">${CDO?'Скрыть':'Точнее?'}</button></div><div class="cdp ${CDO?'open':''}" id="cd-p"><div class="cdg">${[['y','лет'],['mo','мес'],['d','дней'],['h','часов'],['mi','минут'],['s','секунд']].map(([k,l])=>`<div class="cdt"><b id="cd-${k}">0</b><small>${l}</small></div>`).join('')}</div></div></div>`;
+function homeStats(n){const kd=d=>d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(),cnt=a=>Object.values(a.answers||{}).filter(v=>String(v||'').trim()).length;
+ const at=S.att.filter(a=>vsub(a)==SUBJ&&(TUT?a.uid!=ME:true)),done=at.filter(a=>a.done).length,ans=at.reduce((q,a)=>q+cnt(a),0);
  const days=new Set(at.map(a=>kd(new Date(a.start))));let streak=0;const d=new Date();d.setHours(0,0,0,0);if(!days.has(kd(d)))d.setDate(d.getDate()-1);while(days.has(kd(d))){streak++;d.setDate(d.getDate()-1)}
- const bars=[];for(let i=13;i>=0;i--){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-i);bars.push([x,at.filter(a=>kd(new Date(a.start))==kd(x)).length])}
- return{done,ans,streak,bars}}
+ const bars=[];let per=0;for(let i=n-1;i>=0;i--){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-i);const c=at.filter(a=>kd(new Date(a.start))==kd(x)).reduce((q,a)=>q+cnt(a),0);per+=c;bars.push([x,c])}
+ return{done,ans,streak,bars,per}}
+const goalGet=()=>{try{const v=localStorage.getItem('ege27goal_'+SUBJ);if(v!==null)return Math.min(CFG.max,+v||0)}catch(e){}return Math.round(CFG.max*.75)};
+const goalSet=v=>{try{localStorage.setItem('ege27goal_'+SUBJ,String(v))}catch(e){}};
+function lastScore(){const l=S.att.filter(a=>a.done&&vsub(a)==SUBJ&&a.uid==ME).sort((x,y)=>(y.end||0)-(x.end||0))[0];if(!l)return null;
+ if(TUT)return score(l).total;let q={};try{q=JSON.parse(localStorage.getItem('ege27sc')||'{}')}catch(e){}
+ const p1=(q[l.id]||{}).p1;if(p1===undefined)return null;return p1+Object.values(l.self||{}).reduce((t,x)=>t+(+x||0),0)}
+function gUpd(g){const sc=SJ[SUBJ].scale,cur=lastScore();const a=$('#g-v'),b=$('#g-t'),m=$('#g-m');if(a)a.textContent=g;if(b)b.textContent=sc?' · ≈ '+sc[g]+' тестовых':'';if(m)m.style.width=(cur===null||!g?0:Math.min(100,Math.round(cur/g*100)))+'%'}
+function goalCard(){const g=goalGet(),sc=SJ[SUBJ].scale,cur=lastScore();
+ return `<div class="card"><b>Моя цель</b><div class="goal"><span id="g-v">${g}</span><small>из ${CFG.max} первичных<span id="g-t">${sc?' · ≈ '+sc[g]+' тестовых':''}</span></small></div><input type="range" id="g-r" min="0" max="${CFG.max}" step="1" value="${g}">
+ <div class="meter"><i id="g-m" style="width:${cur===null||!g?0:Math.min(100,Math.round(cur/g*100))}%"></i></div>
+ <p class="mut" style="margin:10px 0 0">${cur===null?'Текущий: пока нет завершённых вариантов':`Текущий: <b>${cur}</b> из ${CFG.max} (последний вариант)`}</p></div>`}
+let RESUME=null;try{RESUME=JSON.parse(localStorage.getItem('ege27pos')||'null')}catch(e){}
+function savePos(){if(!SH||V=='login')return;try{const a=C.aid?att():null;localStorage.setItem('ege27pos',JSON.stringify({v:V,s:SUBJ,y:scrollY,c:{aid:C.aid,tid:C.tid,vid:C.vid,lim:C.lim},ai:a?a.i:0,fl:V=='bank'&&$('#flt')?{n:$('#flt').value,q:($('#fq')||{}).value||''}:null}))}catch(e){}}
+addEventListener('pagehide',savePos);document.addEventListener('visibilitychange',()=>{if(document.hidden)savePos()});
+addEventListener('scroll',()=>{clearTimeout(window._sp);window._sp=setTimeout(savePos,400)},{passive:true});
 async function loadFriends(){try{FR=E(await sb.rpc('my_friends'));FRERR=false}catch(e){FR=[];FRERR=true}}
 function frRes(){if(C.res===undefined)return'';if(!C.res.length)return'<p class="mut" style="margin:14px 0 0">Никого не нашли. Проверьте, как имя написано при регистрации.</p>';
  return'<div style="margin-top:12px">'+C.res.map(u=>{const f=FR.find(x=>x.uid==u.id);const btn=!f?`<button class="btn" data-a="fadd" data-v="${u.id}">Добавить</button>`:f.status=='accepted'?'<span class="mut">Уже в друзьях</span>':f.incoming?`<button class="btn" data-a="fadd" data-v="${u.id}">Принять</button>`:'<span class="mut">Заявка отправлена</span>';
@@ -240,22 +278,23 @@ function frRes(){if(C.res===undefined)return'';if(!C.res.length)return'<p class=
 function go(v,c){if(innerWidth<=700)SBO=false;if(!TUT&&!['home','solve','result','bank','build','one','scale','friends'].includes(v))v='home';V=v;C=c||{};render();scrollTo(0,0)}
 function render(){clearInterval(tm);if(V=='login'){document.body.classList.add('lg');$('#app').innerHTML='<main>'+VIEWS.login()+'</main>';if(window.dfb)dfb();return}
  const tabs=[['home','Главная','home'],['bank','Банк заданий','book'],['build','Конструктор','build']].concat(SJ[SUBJ].scale?[['scale','Шкала перевода баллов ЕГЭ','scale']]:[]).concat(SH&&!TUT?[['friends','Друзья','heart']]:[]).concat(SH&&TUT?[['res','Ученики','users']]:[]);
- $('#app').innerHTML=`<aside id="sb" class="noprint ${SBO?'open':''}"><button class="sbi sbt" data-a="sbt" title="Свернуть или развернуть меню" aria-label="Меню">${ic('menu')}<span class="lb">Меню</span></button><div class="sbg">${Object.keys(SJ).map(k=>`<button class="sbi sj ${SUBJ==k?'on':''}" data-a="subj" data-v="${k}" title="${SJ[k].name}">${ic(SJ[k].icon)}<span class="lb">${SJ[k].short}</span></button>`).join('')}</div>${tabs.map(([k,l,i])=>`<button class="sbi ${V==k?'on':''}" data-a="go" data-v="${k}" title="${l}">${ic(i)}<span class="lb">${l}</span></button>`).join('')}<div class="sbf"><button class="sbi" data-a="theme" title="Сменить тему">${ic(theme()=='dark'?'sun':'moon')}<span class="lb">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</span></button>${SH?`<button class="sbi" data-a="out" title="Выйти">${ic('out')}<span class="lb">Выйти</span></button>`:''}</div></aside><div id="sbm" class="noprint ${SBO?'open':''}" data-a="sbt"></div><header class="noprint"><button class="hb" data-a="sbt" aria-label="Меню">${ic('menu')}</button><b>ЕГЭ 2027</b><span class="mut" id="st">${stat()}</span></header><main>${VIEWS[V]()}</main>`;
+ $('#app').innerHTML=`<aside id="sb" class="noprint ${SBO?'open':''}"><button class="sbi sbt" data-a="sbt" title="Свернуть или развернуть меню" aria-label="Меню">${ic('menu')}<span class="lb">Меню</span></button>${RESUME&&RESUME.v&&RESUME.v!='login'?`<button class="sbi cont" data-a="cont" title="Продолжить с места, где остановились">${ic('resume')}<span class="lb">Продолжить с места, где остановились</span></button>`:''}<div class="sbg">${Object.keys(SJ).map(k=>`<button class="sbi sj ${SUBJ==k?'on':''}" data-a="subj" data-v="${k}" title="${SJ[k].name}">${ic(SJ[k].icon)}<span class="lb">${SJ[k].short}</span></button>`).join('')}</div>${tabs.map(([k,l,i])=>`<button class="sbi ${V==k?'on':''}" data-a="go" data-v="${k}" title="${l}">${ic(i)}<span class="lb">${l}</span></button>`).join('')}<div class="sbf"><button class="sbi" data-a="theme" title="Сменить тему">${ic(theme()=='dark'?'sun':'moon')}<span class="lb">${theme()=='dark'?'Светлая тема':'Тёмная тема'}</span></button>${SH?`<button class="sbi" data-a="out" title="Выйти">${ic('out')}<span class="lb">Выйти</span></button>`:''}</div></aside><div id="sbm" class="noprint ${SBO?'open':''}" data-a="sbt"></div><header class="noprint"><button class="hb" data-a="sbt" aria-label="Меню">${ic('menu')}</button><b>ЕГЭ 2028</b><span class="mut" id="st">${stat()}</span></header><main>${VIEWS[V]()}</main>`;
  document.body.classList.toggle('sbo',SBO);document.body.classList.remove('lg');if(V=='solve'){tick();tm=setInterval(tick,1000)}else if(V=='home'){cdTick();tm=setInterval(cdTick,1000)}
- if(V=='bank')fillList();hydrate();if(window.dfb)dfb();if(V=='build')bsum();if(V=='friends'&&!C.fl){C.fl=1;loadFriends().then(()=>{if(V=='friends')render()})}
+ if(V=='bank')fillList();hydrate();if(window.dfb)dfb();if(V=='build')bsum();if(V=='friends'&&!C.fl){C.fl=1;loadFriends().then(()=>{if(V=='friends')render()})}savePos();
  typeset()}
 function tick(){const a=att();if(!a)return;const v=S.vars.find(x=>x.id==a.vid),el=$('#tm');if(!el||!v.limit)return;
  const r=v.limit*60-Math.floor((Date.now()-a.start)/1000);if(r<=0){A.finish();return}el.textContent=C.hide?'скрыт':fT(r)}
 
 const VIEWS={
-home(){const vs=S.vars.filter(v=>(!v.own||v.own==ME)&&(v.subj||'math')==SUBJ).reverse(),a=S.att.filter(x=>!x.done&&vsub(x)==SUBJ).slice(-1)[0],st=homeStats(),mx=Math.max(1,...st.bars.map(b=>b[1]));
+home(){const vs=S.vars.filter(v=>(!v.own||v.own==ME)&&(v.subj||'math')==SUBJ).reverse(),a=S.att.filter(x=>!x.done&&vsub(x)==SUBJ).slice(-1)[0],st=homeStats(CHP),mx=Math.max(1,...st.bars.map(b=>b[1]));
  const tiles=[['bank','Банк заданий','book','Решайте задания по номерам'],['build','Конструктор','build','Соберите свой вариант']].concat(SJ[SUBJ].scale?[['scale','Шкала баллов','chart','Первичные в тестовые']]:[]).concat(TUT?(SH?[['res','Ученики','users','Результаты работ']]:[]):[['friends','Друзья','heart','Добавляйте по имени']]);
- const nums=TUT?[['Учеников',S.stu.filter(p=>p.role=='student').length],['Работ завершено',st.done],['Заданий в банке',sbn()],['Вариантов',vs.length]]:[['Работ завершено',st.done],['Заданий отвечено',st.ans],['Дней подряд',st.streak],['Друзей',FR.filter(f=>f.status=='accepted').length]];
- return `<div class="hh"><div><h1>Здравствуйте${NAME?', '+esc(NAME):''}</h1><p class="mut">${SJ[SUBJ].name} · ${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p></div>${cdCard()}</div>
- ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:TUT?`<button class="btn big" data-a="go" data-v="${sbn()?'build':'bank'}">${sbn()?'Составить первый вариант':'Добавить первое задание'}</button>`:sbn()?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}
- <div class="tiles">${tiles.map(([k,t,i,d])=>`<button class="tile" data-a="go" data-v="${k}">${ic(i)}<b>${t}</b><small>${d}</small></button>`).join('')}</div>
+ const nums=TUT?[['Учеников',S.stu.filter(p=>p.role=='student').length],['Работ завершено',st.done],['Заданий в банке',sbn()],['Вариантов',vs.length]]:[['Работ завершено',st.done],['Заданий сделано',st.ans],['Серия занятий',st.streak],['Друзей',FR.filter(f=>f.status=='accepted').length]];
+ return `<div class="hh"><div><div class="gr"><h1>Здравствуйте${NAME?', '+esc(NAME):''}</h1><button class="rnb" data-a="rn">Изменить имя</button></div><p class="mut">${SJ[SUBJ].name} · ${N} заданий · до ${CFG.max} первичных баллов · ${hm(CFG.time)}</p></div>${cdCard()}</div>
+ ${a?`<button class="btn big" data-a="resume" data-v="${a.id}">Продолжить занятие</button>`:vs.length?`<button class="btn big" data-a="start" data-v="${vs[0].id}">Начать: ${esc(vs[0].name)}</button>`:TUT?`<button class="btn big" data-a="go" data-v="${sbn()?'build':'bank'}">${sbn()?'Составить первый вариант':'Добавить первое задание'}</button>`:sbn()&&SUBJ!='math'?'<button class="btn big" data-a="go" data-v="build">Составить свой вариант</button>':''}
+ ${RESUME&&RESUME.v&&RESUME.v!='home'?`<button class="cont2" data-a="cont">Продолжить с места, где остановились</button>`:''}<div class="tiles">${tiles.map(([k,t,i,d])=>`<button class="tile" data-a="go" data-v="${k}">${ic(i)}<b>${t}</b><small>${d}</small></button>`).join('')}</div>
  <h2>Статистика</h2><div class="stats">${nums.map(([t,n])=>`<div class="stat"><b>${n}</b><small>${t}</small></div>`).join('')}</div>
- <div class="card"><b>Активность за 14 дней</b><div class="chart">${st.bars.map(([d,n])=>`<div title="${d.toLocaleDateString('ru-RU')}: ${n}"><i style="height:${Math.round(n/mx*100)}%"></i><span>${d.getDate()}</span></div>`).join('')}</div></div>
+ <div class="card"><div class="bar"><b>Активность</b><div class="seg">${[7,14,30].map(k=>`<button class="${CHP==k?'on':''}" data-a="chp" data-v="${k}">${k} дн.</button>`).join('')}</div></div><p class="mut" style="margin:10px 0 0">За ${CHP} ${pl(CHP,['день','дня','дней'])} сделано заданий: <b>${st.per}</b></p><div class="chart">${st.bars.map(([d,n],i)=>`<div title="${d.toLocaleDateString('ru-RU')}: ${n}"><i style="height:${Math.round(n/mx*100)}%"></i><span>${i%Math.ceil(CHP/7)==0?d.getDate():''}</span></div>`).join('')}</div></div>
+ ${TUT?'':goalCard()}
  <h2>Варианты</h2>${vs.length?`<div class="card">${vs.map(v=>`<div class="it"><div><b>${esc(v.name)}</b><div class="mut">${v.ids.length} задач · ${v.mode=='exam'?'экзамен':'тренировка'} · ${v.limit?hm(v.limit):'без ограничения времени'}</div></div>
  <div class="row" style="flex:0 0 auto;margin:0"><button class="btn" data-a="start" data-v="${v.id}">Решать</button>${TUT?`<button data-a="asgv" data-v="${v.id}">Назначить</button>`:''}${TUT||v.own==ME?`<button data-a="delv" data-v="${v.id}">Удалить</button>`:''}</div></div>`).join('')}</div>`:'<p class="mut">'+(TUT?'Вариантов пока нет. Добавьте задачи в банк и составьте вариант в конструкторе.':'Начните решать.')+'</p>'}`},
 friends(){const inc=FR.filter(f=>f.status=='pending'&&f.incoming),out=FR.filter(f=>f.status=='pending'&&!f.incoming),fr=FR.filter(f=>f.status=='accepted'),av=n=>`<span class="av">${esc((n||'?')[0].toUpperCase())}</span>`;
@@ -303,7 +342,7 @@ result(){const a=att(),v=S.vars.find(x=>x.id==a.vid),ts=vt(v),s=score(a),mx=ts.r
  `<tr><td>${t.n}</td><td>${fmt(a.answers[t.id])||'—'}${t.solution?`<details><summary class="mut">Эталон и критерии</summary>${fmt(t.solution)}</details>`:''}</td><td><input type="number" min="0" max="${M[t.n-1]}" data-f="self" data-t="${t.id}" data-m="${M[t.n-1]}" value="${a.self[t.id]||0}" style="width:70px"> из ${M[t.n-1]}</td></tr>`).join('')}</table></div>
  <button class="btn" data-a="go" data-v="home">На главную</button>`},
 
-login(){if(C.load)return'<p class="mut">Загрузка…</p>';const r=C.reg;return `<h1>ЕГЭ 2027</h1><p class="mut">${r?'Создайте аккаунт.':'Войдите, чтобы продолжить.'} <span class="bad" id="lmsg">${C.msg?esc(C.msg):''}</span></p><div class="card">${r?'<label>Имя<input id="ln" autocomplete="name"></label>':''}<label>Почта<input id="lm" type="email" autocomplete="username"></label><label>Пароль<input id="lp" type="password" autocomplete="${r?'new-password':'current-password'}"></label><div class="row" style="margin-top:14px"><button class="btn" data-a="${r?'reg':'login'}">${r?'Зарегистрироваться':'Войти'}</button></div><p class="mut" style="margin:14px 0 0">${r?'Уже есть аккаунт?':'Нет аккаунта?'} <button class="lnk" data-a="lmode" data-v="${r?'':'1'}">${r?'Войти':'Зарегистрироваться'}</button></p></div>`},
+login(){if(C.load)return'<p class="mut">Загрузка…</p>';const r=C.reg;return `<h1>ЕГЭ 2028</h1><p class="mut">${r?'Создайте аккаунт.':'Войдите, чтобы продолжить.'} <span class="bad" id="lmsg">${C.msg?esc(C.msg):''}</span></p><div class="card">${r?'<label>Имя<input id="ln" autocomplete="name"></label>':''}<label>Почта<input id="lm" type="email" autocomplete="username"></label><label>Пароль<input id="lp" type="password" autocomplete="${r?'new-password':'current-password'}"></label><div class="row" style="margin-top:14px"><button class="btn" data-a="${r?'reg':'login'}">${r?'Зарегистрироваться':'Войти'}</button></div><p class="mut" style="margin:14px 0 0">${r?'Уже есть аккаунт?':'Нет аккаунта?'} <button class="lnk" data-a="lmode" data-v="${r?'':'1'}">${r?'Войти':'Зарегистрироваться'}</button></p></div>`},
 one(){const t=S.bank.find(x=>x.id==C.tid);if(!t)return'<p>Задание не найдено.</p>';const p1=part(t.n)==1,r=C.res;
  return `<div class="bar"><button data-a="go" data-v="bank">← К банку заданий</button><span class="mut">№${t.n} · ${esc(t.topic||T[t.n-1])} · ${M[t.n-1]} б.${t.code?' · '+esc(t.code):''}</span></div>
  <div class="card"><div class="txt">${fmt(t.text)}</div>${timg(t)}
@@ -442,7 +481,7 @@ ae=e=>{const m=((e&&e.message)||'').toLowerCase(),c=(e&&e.code)||'';
  if(m.includes('anonymous'))return'Заполните все поля.';
  if(m.includes('failed to fetch')||m.includes('network'))return'Нет соединения с интернетом.';
  return'Не удалось выполнить действие. Попробуйте ещё раз.'};
-document.addEventListener('keydown',e=>{if(e.key=='Enter'&&['lm','lp','ln'].includes(e.target.id)){const b=document.querySelector('[data-a="login"],[data-a="reg"]');if(b)b.click()}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&['lm','lp','ln'].includes(e.target.id)){const b=document.querySelector('[data-a="login"],[data-a="reg"]');if(b)b.click()}else if(e.key=='Enter'&&e.target.id=='rn-in'){const b=document.querySelector('[data-a="rnok"]');if(b)b.click()}});
 const A={
 theme:()=>{const t=theme()=='dark'?'light':'dark',ap=()=>{document.documentElement.dataset.theme=t;try{localStorage.setItem('ege27theme',t)}catch(e){}const tb=document.querySelector('[data-a="theme"]');if(tb)tb.innerHTML=ic(t=='dark'?'sun':'moon')+'<span class="lb">'+(t=='dark'?'Светлая тема':'Тёмная тема')+'</span>';if(window.dsw)dsw()};
  if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion:reduce)').matches)document.startViewTransition(ap);else ap()},
@@ -486,6 +525,15 @@ fsearch:async()=>{const q=$('#fq2').value.trim();C.q=q;if(!q)return;const b=docu
 fadd:async id=>{try{const inc=FR.find(f=>f.uid==id&&f.status=='pending'&&f.incoming);if(inc)E(await sb.from('friendships').update({status:'accepted'}).eq('id',inc.rid));else E(await sb.from('friendships').insert({requester:ME,addressee:id}))}catch(e){note(e&&e.code=='23505'?'Заявка уже отправлена.':'Не удалось добавить друга. Попробуйте ещё раз.')}await loadFriends();render()},
 facc:async id=>{try{E(await sb.from('friendships').update({status:'accepted'}).eq('id',id))}catch(e){note('Не удалось принять заявку.')}await loadFriends();render()},
 fdel:async id=>{try{E(await sb.from('friendships').delete().eq('id',id))}catch(e){note('Не удалось выполнить действие.')}await loadFriends();render()},
+chp:v=>{CHP=+v;render()},
+cont:()=>{const r=RESUME;if(!r)return;if(r.s&&SJ[r.s]&&r.s!=SUBJ)setSubj(r.s);const c=Object.assign({},r.c);
+ if(r.v=='solve'){const a=S.att.find(x=>x.id==c.aid);if(!a||a.done)return go('home');a.i=r.ai||0}
+ if(r.v=='result'&&!S.att.find(x=>x.id==c.aid))return go('home');
+ if(r.v=='one'&&!S.bank.find(x=>x.id==c.tid))return go('bank');
+ go(r.v,c);if(r.v=='bank'&&r.fl){const f=$('#flt'),q=$('#fq');if(f)f.value=r.fl.n;if(q)q.value=r.fl.q;fillList()}
+ setTimeout(()=>scrollTo(0,r.y||0),80)},
+rn:()=>{if($('#md'))return;const d=document.createElement('div');d.id='md';d.className='noprint';d.innerHTML='<div class="mb" role="dialog" aria-modal="true"><p><b>Изменить имя</b></p><input id="rn-in" maxlength="40" placeholder="Ваше имя" value="'+esc(NAME)+'"><p class="bad" id="rn-e" style="margin:8px 0 0"></p><div class="row"><button class="btn" data-a="rnok">Сохранить</button><button data-a="outno">Отмена</button></div></div>';d.onclick=e=>{if(e.target==d)d.remove()};document.body.append(d);setTimeout(()=>{const i=$('#rn-in');if(i){i.focus();i.select()}},60)},
+rnok:async()=>{const v=($('#rn-in').value||'').trim(),e=$('#rn-e');if(!v){e.textContent='Введите имя.';return}e.textContent='';const done=busy('rnok','Сохраняем…');try{E(await sb.rpc('set_my_name',{p_name:v}));NAME=v.slice(0,40);const d=$('#md');if(d)d.remove();render()}catch(x){done();e.textContent='Не удалось сохранить имя. Попробуйте ещё раз.'}},
 open:id=>go('result',{aid:id}),
 migr:async()=>{MIG=1;for(const t of LEG.bank){if(S.bank.some(x=>x.id==t.id))continue;const n=Object.assign({},t);if(t.img&&t.img.indexOf('a:')!==0&&AS){try{const b=await iget(t.img);if(b){const r=await AS.upload(b);n.img='a:'+r.id}}catch(e){}}S.bank.push(n)}save();go('bank',{msg:'Задания перенесены в общий банк.'})},
 rmimg:()=>{if(C.img&&C.img!=C.orig)idel(C.img);C.img=null;$('#imgbox').innerHTML=''},
@@ -495,7 +543,7 @@ start:id=>{const a={id:uid(),vid:id,uid:ME||'',start:Date.now(),answers:{},self:
 jump:i=>{if(window.dclr)dclr();att().i=+i;save();const h=C.hide;render();C.hide=h},
 hide:()=>{C.hide=!C.hide;render()},
 chk:id=>{att().chk[id]=1;save();render()},
-finish:async()=>{const a=att();if(a.fin)return;a.fin=1;if(SH&&!TUT){try{clearTimeout(tmr);while(SYNCING)await new Promise(q=>setTimeout(q,100));SYNCING=1;try{await doSync()}finally{SYNCING=0}const r=await sb.rpc('finish_attempt',{p_attempt:a.id});if(r.error)throw r.error;(r.data||[]).forEach(x=>{const t=S.bank.find(q=>q.id==x.task_id);if(t){t.answer=x.answer||'';t.solution=x.solution||''}})}catch(e){NW=true;NWM=((e&&e.message)||'').slice(0,140);mark()}}a.done=true;a.end=Date.now();go('result',{aid:a.id})},
+finish:async()=>{const a=att();if(a.fin)return;a.fin=1;if(SH&&!TUT){try{clearTimeout(tmr);while(SYNCING)await new Promise(q=>setTimeout(q,100));SYNCING=1;try{await doSync()}finally{SYNCING=0}const r=await sb.rpc('finish_attempt',{p_attempt:a.id});if(r.error)throw r.error;(r.data||[]).forEach(x=>{const t=S.bank.find(q=>q.id==x.task_id);if(t){t.answer=x.answer||'';t.solution=x.solution||''}})}catch(e){NW=true;NWM=((e&&e.message)||'').slice(0,140);mark()}}a.done=true;a.end=Date.now();if(!TUT){try{const q=JSON.parse(localStorage.getItem('ege27sc')||'{}');q[a.id]={p1:score(a).p1};localStorage.setItem('ege27sc',JSON.stringify(q))}catch(e){}}go('result',{aid:a.id})},
 delv:id=>{S.vars=S.vars.filter(v=>v.id!=id);save();render()},
 
 delt:id=>{const x=S.bank.find(t=>t.id==id);if(x&&x.img)idel(x.img);S.bank=S.bank.filter(t=>t.id!=id);save();render()},
@@ -518,7 +566,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&
 document.addEventListener('input',e=>{const t=e.target,f=t.dataset.f;
  if(f=='ans'){att().answers[t.dataset.t]=t.value;save();const c=document.querySelector('.chip.on');if(c)c.classList.toggle('dn',!!norm(t.value))}
  else if(f=='self'){att().self[t.dataset.t]=Math.max(0,Math.min(+t.dataset.m,+t.value||0));save();$('#tot').textContent=score(att()).total;$('#tst').textContent=tstA(att())}
- else if(t.id&&t.id.indexOf('ba-')==0){const id=t.id.slice(3),b=document.querySelector('[data-a="bchk"][data-v="'+id+'"]');BV[id]=t.value;if(b)b.disabled=!t.value.trim()}else if(t.id=='fx'){$('#pv').innerHTML=fmt(t.value);typeset()}else if(t.id=='fq')fillList()});
+ else if(t.id=='g-r'){goalSet(+t.value);gUpd(+t.value)}else if(t.id&&t.id.indexOf('ba-')==0){const id=t.id.slice(3),b=document.querySelector('[data-a="bchk"][data-v="'+id+'"]');BV[id]=t.value;if(b)b.disabled=!t.value.trim()}else if(t.id=='fx'){$('#pv').innerHTML=fmt(t.value);typeset()}else if(t.id=='fq')fillList()});
 document.addEventListener('change',e=>{const t=e.target;
  if(t.id=='fimg'){pick(t.files[0]);t.value=''}else if(t.id=='fn'){$('#ft').value=T[t.value-1];$('#la').hidden=+t.value>CFG.part1Last}
  else if(t.id=='flt')fillList();else if(t.name=='mode'){$('#man').hidden=t.value!='manual';$('#aut').hidden=t.value=='manual'}});
